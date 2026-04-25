@@ -328,47 +328,6 @@ local Images = {
 	),
 }
 
-function Library:Outline(obj, color, zin, ignore)
-	local outline
-
-	if typeof(obj) == "Instance" then
-		outline = Instance.new("Frame")
-		outline.BackgroundTransparency = 1
-
-		local uiStroke = Instance.new("UIStroke", outline)
-		uiStroke.Thickness = 1
-
-		if typeof(color) == "Color3" then
-			uiStroke.Color = color
-		else
-			uiStroke.Color = Library.Theme[color]
-			ThemeObjects[uiStroke] = color
-		end
-
-		outline.Parent = obj
-		outline.Size = UDim2.new(1, 2, 1, 2)
-		outline.Position = UDim2.new(0, -1, 0, -1)
-		outline.ZIndex = zin or (obj.ZIndex - 1)
-	else
-		outline = Drawing.new("Square")
-		outline.Filled = false
-		outline.Thickness = 1
-
-		if typeof(color) == "Color3" then
-			outline.Color = color
-		else
-			outline.Color = Library.Theme[color]
-			ThemeObjects[outline] = color
-		end
-	end
-
-	if not ignore then
-		table.insert(Library.Drawings, outline)
-	end
-
-	return outline
-end
-
 local ClassMap = {
 	["Square"] = "Frame",
 	["Text"] = "TextLabel",
@@ -376,74 +335,178 @@ local ClassMap = {
 }
 
 function Library:Create(class, properties, ignore)
-	local obj
-	if class == "Quad" or class == "Triangle" or class == "Line" then
-		obj = Drawing.new(class)
-	else
-		obj = Instance.new(ClassMap[class] or class)
+	local Obj
+	local IsInstance = false
 
-		if obj:IsA("GuiObject") then
-			obj.BorderSizePixel = 0
-			obj.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			obj.BackgroundTransparency = 1 -- Default to transparent
+	if class == "Quad" or class == "Triangle" or class == "Line" then
+		Obj = Drawing.new(class)
+	else
+		Obj = Instance.new(ClassMap[class] or class)
+		IsInstance = true
+
+		if Obj:IsA("GuiObject") then
+			Obj.BorderSizePixel = 0
+			Obj.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			Obj.BackgroundTransparency = 1
 
 			if not properties.Parent and ScreenGui then
-				obj.Parent = ScreenGui
+				Obj.Parent = ScreenGui
 			end
 		end
 
-		if obj:IsA("TextLabel") then
-			obj.TextSize = 13
-			obj.Font = Enum.Font.Code
-			obj.Text = ""
-			obj.TextColor3 = Color3.new(1, 1, 1)
+		if Obj:IsA("TextLabel") then
+			Obj.TextSize = 13
+			Obj.Font = Enum.Font.Code
+			Obj.Text = ""
+			Obj.TextColor3 = Color3.new(1, 1, 1)
 		end
 	end
 
 	if not ignore then
-		table.insert(Library.Drawings, obj)
+		table.insert(Library.Drawings, Obj)
 	end
 
-	for prop, v in pairs(properties) do
-		if prop == "Theme" then
-			ThemeObjects[obj] = v
-			if typeof(obj) == "Instance" then
-				if obj:IsA("TextLabel") then
-					obj.TextColor3 = Library.Theme[v]
-				else
-					obj.BackgroundColor3 = Library.Theme[v]
+	if IsInstance then
+		local Layout = nil
+
+		local CustomProps = {
+			AbsoluteContentSize = 0,
+			_Instance = Obj,
+		}
+
+		local Proxy = setmetatable({}, {
+			__index = function(_, Key)
+				if CustomProps[Key] ~= nil then
+					if Key == "AbsoluteContentSize" and Layout then
+						return Layout.AbsoluteContentSize.Y
+					end
+					return CustomProps[Key]
 				end
-			else
-				obj.Color = Library.Theme[v]
-			end
-		elseif prop == "Color" then
-			if typeof(obj) == "Instance" then
-				if obj:IsA("TextLabel") then
-					obj.TextColor3 = v
-				else
-					obj.BackgroundColor3 = v
+
+				local Value = Obj[Key]
+				if type(Value) == "function" then
+					return function(_, ...)
+						return Value(Obj, ...)
+					end
 				end
-			else
-				obj.Color = v
+				return Value
+			end,
+			__newindex = function(_, Key, Value)
+				if CustomProps[Key] ~= nil then
+					CustomProps[Key] = Value
+				else
+					Obj[Key] = Value
+				end
+			end,
+		})
+
+		function Proxy:AddListLayout(Padding)
+			Layout = Instance.new("UIListLayout", Obj)
+			Layout.Padding = UDim.new(0, Padding or 0)
+			Layout.SortOrder = Enum.SortOrder.LayoutOrder
+			return Layout
+		end
+
+		function Proxy:MakeScrollable()
+			Obj.ClipsDescendants = true
+		end
+
+		function Proxy:RefreshScrolling()
+			if Layout then
+				CustomProps.AbsoluteContentSize = Layout.AbsoluteContentSize.Y
 			end
-		elseif prop == "Filled" then
-			if typeof(obj) == "Instance" and obj:IsA("Frame") then
-				obj.BackgroundTransparency = v and 0 or 1
-			elseif typeof(obj) ~= "Instance" then
-				obj.Filled = v
+		end
+
+		for Prop, Val in pairs(properties) do
+			if Prop == "Theme" then
+				ThemeObjects[Proxy] = Val
+				if Obj:IsA("TextLabel") then
+					Obj.TextColor3 = Library.Theme[Val]
+				else
+					Obj.BackgroundColor3 = Library.Theme[Val]
+				end
+			elseif Prop == "Color" then
+				if Obj:IsA("TextLabel") then
+					Obj.TextColor3 = Val
+				else
+					Obj.BackgroundColor3 = Val
+				end
+			elseif Prop == "Filled" then
+				if Obj:IsA("Frame") then
+					Obj.BackgroundTransparency = Val and 0 or 1
+				end
+			elseif Prop == "Outline" and Obj:IsA("TextLabel") then
+				Obj.TextStrokeTransparency = Val and 0 or 1
+			elseif Prop == "Center" and Obj:IsA("TextLabel") then
+				Obj.TextXAlignment = Val and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left
+			elseif Prop ~= "Data" then
+				pcall(function()
+					Proxy[Prop] = Val
+				end)
 			end
-		elseif prop == "Outline" and typeof(obj) == "Instance" and obj:IsA("TextLabel") then
-			obj.TextStrokeTransparency = v and 0 or 1
-		elseif prop == "Center" and typeof(obj) == "Instance" and obj:IsA("TextLabel") then
-			obj.TextXAlignment = v and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left
+		end
+
+		return Proxy
+	end
+
+	for Prop, Val in pairs(properties) do
+		if Prop == "Theme" then
+			ThemeObjects[Obj] = Val
+			Obj.Color = Library.Theme[Val]
 		else
 			pcall(function()
-				obj[prop] = v
+				Obj[Prop] = Val
 			end)
 		end
 	end
 
-	return obj
+	return Obj
+end
+
+function Library:Outline(obj, color, zin, ignore)
+	local Outline
+	local TargetObj = obj
+
+	if type(obj) == "table" and obj._Instance then
+		TargetObj = obj._Instance
+	end
+
+	if typeof(TargetObj) == "Instance" then
+		Outline = Instance.new("Frame")
+		Outline.BackgroundTransparency = 1
+
+		local UiStroke = Instance.new("UIStroke", Outline)
+		UiStroke.Thickness = 1
+
+		if typeof(color) == "Color3" then
+			UiStroke.Color = color
+		else
+			UiStroke.Color = Library.Theme[color]
+			ThemeObjects[UiStroke] = color
+		end
+
+		Outline.Parent = TargetObj
+		Outline.Size = UDim2.new(1, 2, 1, 2)
+		Outline.Position = UDim2.new(0, -1, 0, -1)
+		Outline.ZIndex = zin or (TargetObj.ZIndex - 1)
+	else
+		Outline = Drawing.new("Square")
+		Outline.Filled = false
+		Outline.Thickness = 1
+
+		if typeof(color) == "Color3" then
+			Outline.Color = color
+		else
+			Outline.Color = Library.Theme[color]
+			ThemeObjects[Outline] = color
+		end
+	end
+
+	if not ignore then
+		table.insert(Library.Drawings, Outline)
+	end
+
+	return Outline
 end
 
 function Library:Connect(signal, callback)
@@ -3390,6 +3453,7 @@ function Library:new(cfg)
 			Size = UDim2.new(0.5, -14, 1, -10),
 		})
 		left:AddListLayout(15)
+
 		local right = Library:Create("Square", {
 			Transparency = 0,
 			Filled = false,
