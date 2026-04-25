@@ -218,13 +218,13 @@ local library = {
 	currentcolor = nil,
 	flags = {},
 	open = false,
-	mousestate = services.InputService.MouseIconEnabled,
 	cursor = nil,
 	holder = nil,
 	connections = {},
 	notifications = {},
 	gradient = nil,
 }
+
 local decode = (crypt and crypt.base64decode) or base64_decode
 local flags = {}
 local configignores = {}
