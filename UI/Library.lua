@@ -329,50 +329,130 @@ local Images = {
 }
 
 function Library:Outline(obj, color, zin, ignore)
-	local outline = Drawing.new("Square")
+	local outline
+
+	if typeof(obj) == "Instance" then
+		outline = Instance.new("Frame")
+		outline.BackgroundTransparency = 1
+
+		local uiStroke = Instance.new("UIStroke", outline)
+		uiStroke.Thickness = 1
+
+		if typeof(color) == "Color3" then
+			uiStroke.Color = color
+		else
+			uiStroke.Color = Library.Theme[color]
+			ThemeObjects[uiStroke] = color
+		end
+
+		outline.Parent = obj
+		outline.Size = UDim2.new(1, 2, 1, 2)
+		outline.Position = UDim2.new(0, -1, 0, -1)
+		outline.ZIndex = zin or (obj.ZIndex - 1)
+	else
+		outline = Drawing.new("Square")
+		outline.Filled = false
+		outline.Thickness = 1
+
+		if typeof(color) == "Color3" then
+			outline.Color = color
+		else
+			outline.Color = Library.Theme[color]
+			ThemeObjects[outline] = color
+		end
+	end
+
 	if not ignore then
 		table.insert(Library.Drawings, outline)
 	end
-	outline.Parent = obj
-	outline.Size = UDim2.new(1, 2, 1, 2)
-	outline.Position = UDim2.new(0, -1, 0, -1)
-	outline.ZIndex = zin or obj.ZIndex - 1
-
-	if typeof(color) == "Color3" then
-		outline.Color = color
-	else
-		outline.Color = Library.Theme[color]
-		ThemeObjects[outline] = color
-	end
-
-	outline.Parent = obj
-	outline.Filled = false
-	outline.Thickness = 1
 
 	return outline
 end
+
+local ClassMap = {
+	["Square"] = "Frame",
+	["Text"] = "TextLabel",
+	["Image"] = "ImageLabel",
+}
+
 function Library:Create(class, properties, ignore)
-	local obj = Drawing.new(class)
+	local obj
+	if class == "Quad" or class == "Triangle" or class == "Line" then
+		obj = Drawing.new(class)
+	else
+		obj = Instance.new(ClassMap[class] or class)
+
+		if obj:IsA("GuiObject") then
+			obj.BorderSizePixel = 0
+			obj.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			obj.BackgroundTransparency = 1 -- Default to transparent
+
+			if not properties.Parent and ScreenGui then
+				obj.Parent = ScreenGui
+			end
+		end
+
+		if obj:IsA("TextLabel") then
+			obj.TextSize = 13
+			obj.Font = Enum.Font.Code
+			obj.Text = ""
+			obj.TextColor3 = Color3.new(1, 1, 1)
+		end
+	end
+
 	if not ignore then
 		table.insert(Library.Drawings, obj)
 	end
-	for prop, v in next, properties do
+
+	for prop, v in pairs(properties) do
 		if prop == "Theme" then
 			ThemeObjects[obj] = v
-			obj.Color = Library.Theme[v]
-		elseif obj then
-			obj[prop] = v
+			if typeof(obj) == "Instance" then
+				if obj:IsA("TextLabel") then
+					obj.TextColor3 = Library.Theme[v]
+				else
+					obj.BackgroundColor3 = Library.Theme[v]
+				end
+			else
+				obj.Color = Library.Theme[v]
+			end
+		elseif prop == "Color" then
+			if typeof(obj) == "Instance" then
+				if obj:IsA("TextLabel") then
+					obj.TextColor3 = v
+				else
+					obj.BackgroundColor3 = v
+				end
+			else
+				obj.Color = v
+			end
+		elseif prop == "Filled" then
+			if typeof(obj) == "Instance" and obj:IsA("Frame") then
+				obj.BackgroundTransparency = v and 0 or 1
+			elseif typeof(obj) ~= "Instance" then
+				obj.Filled = v
+			end
+		elseif prop == "Outline" and typeof(obj) == "Instance" and obj:IsA("TextLabel") then
+			obj.TextStrokeTransparency = v and 0 or 1
+		elseif prop == "Center" and typeof(obj) == "Instance" and obj:IsA("TextLabel") then
+			obj.TextXAlignment = v and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left
+		else
+			pcall(function()
+				obj[prop] = v
+			end)
 		end
 	end
 
 	return obj
 end
+
 function Library:Connect(signal, callback)
 	local connection = signal:Connect(callback)
 	table.insert(Library.Connections, connection)
 
 	return connection
 end
+
 function Library:Disconnect(connection)
 	local index = table.find(Library.Connections, connection)
 	connection:Disconnect()
@@ -381,6 +461,7 @@ function Library:Disconnect(connection)
 		table.remove(Library.Connections, index)
 	end
 end
+
 function Library:Instance(a, b)
 	local instance = Instance.new(a)
 	if type(b) == "table" then
@@ -423,21 +504,6 @@ end)
 
 function Library:set_open(bool)
 	if typeof(bool) == "boolean" then
-		--[=[
-        for _,v in next, Library.Drawings do
-            if v.Transparency ~= 0 then
-                task.spawn(function()
-                    if bool then
-                        local fadein = Tween.new(v, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {Transparency = VisValues[v]})
-                        fadein:Play()
-                    else
-                        local fadeout = Tween.new(v, TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {Transparency = .05})
-                        fadeout:Play()
-                        VisValues[v] = v.Transparency;
-                    end
-                end)
-            end
-        end--]=]
 		self.Open = bool
 		ScreenGui.Enabled = bool
 		self.Holder.Visible = bool
@@ -3096,7 +3162,7 @@ end
 function Library:new(cfg)
 	local window = { objs = {}, pages = {}, pages_buttons = {}, pages_titles = {}, pages_buttons_lines = {} }
 	local name_white = cfg.name or cfg.Name or "Title"
-	local name_color = cfg.sub or cfg.Sub or "Hook"
+	local name_color = cfg.sub or cfg.Sub or "Subtitle"
 	local offset = cfg.offset or cfg.offset or 0
 	local size = cfg.size or cfg.Size or Vector2.new(600, 650)
 
