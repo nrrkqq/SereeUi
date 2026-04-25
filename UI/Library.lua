@@ -299,7 +299,7 @@ function utility.dragify(main, dragoutline, object)
 		end
 	end)
 
-	services.InputService.InputChanged:Connect(function(input)
+	services.UserInputService.InputChanged:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement and dragging then
 			currentpos = UDim2.new(
 				objectposition.X.Scale,
@@ -311,7 +311,7 @@ function utility.dragify(main, dragoutline, object)
 		end
 	end)
 
-	services.InputService.InputEnded:Connect(function(input)
+	services.UserInputService.InputEnded:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 and dragging then
 			dragging = false
 			dragoutline.Visible = false
@@ -452,8 +452,8 @@ function library:set_open(bool)
 		cursor1.Visible = bool
 		cursor2.Visible = bool
 		local ContextActionService = services.ContextActionService
-		local InputService = services.UserInputService
-		local originalState = InputService.MouseIconEnabled
+		local UserInputService = services.UserInputService
+		local originalState = UserInputService.MouseIconEnabled
 		if bool then
 			local ContextActionService = services.ContextActionService
 			ContextActionService:BindAction("Scrolling", function()
@@ -462,9 +462,9 @@ function library:set_open(bool)
 			ContextActionService:BindAction("Input", function()
 				return Enum.ContextActionResult.Sink
 			end, false, Enum.UserInputType.MouseButton1)
-			InputService.MouseIconEnabled = false
+			UserInputService.MouseIconEnabled = false
 		else
-			InputService.MouseIconEnabled = originalState
+			UserInputService.MouseIconEnabled = originalState
 			ContextActionService:UnbindAction("Scrolling")
 			ContextActionService:UnbindAction("Input")
 		end
@@ -733,7 +733,7 @@ function library.createdropdown(
 		end
 		--
 		contentholder.MouseEnter:Connect(function()
-			scroll_connect = library:connect(services.InputService.InputChanged, function(input)
+			scroll_connect = library:connect(services.UserInputService.InputChanged, function(input)
 				if input.UserInputType == Enum.UserInputType.MouseWheel then
 					local down = input.Position.Z < 0 and true or false
 					if down then
@@ -1042,7 +1042,7 @@ function library.createlist(
 		end
 		--
 		contentholder.MouseEnter:Connect(function()
-			scroll_connect = library:connect(services.InputService.InputChanged, function(input)
+			scroll_connect = library:connect(services.UserInputService.InputChanged, function(input)
 				if input.UserInputType == Enum.UserInputType.MouseWheel then
 					local down = input.Position.Z < 0 and true or false
 					if down then
@@ -1347,7 +1347,7 @@ function library.createslider(cfg)
 		end
 	end)
 
-	library:connect(services.InputService.InputChanged, function(input)
+	library:connect(services.UserInputService.InputChanged, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			if sliding then
 				slide(input)
@@ -1612,7 +1612,7 @@ function library.createmultibox(
 		end
 		--
 		contentholder.MouseEnter:Connect(function()
-			scroll_connect = library:connect(services.InputService.InputChanged, function(input)
+			scroll_connect = library:connect(services.UserInputService.InputChanged, function(input)
 				if input.UserInputType == Enum.UserInputType.MouseWheel then
 					local down = input.Position.Z < 0 and true or false
 					if down then
@@ -2120,7 +2120,7 @@ function library.object_colorpicker_inner(default, defaultalpha, parent, count, 
 		end
 	end)
 
-	library:connect(services.InputService.InputChanged, function(input)
+	library:connect(services.UserInputService.InputChanged, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			if slidingalpha then
 				updatealpha(input)
@@ -2906,7 +2906,7 @@ function library.object_colorpicker(default, defaultalpha, parent, count, flag, 
 		end
 	end)
 
-	library:connect(services.InputService.InputChanged, function(input)
+	library:connect(services.UserInputService.InputChanged, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			if slidingalpha then
 				updatealpha(input)
@@ -3025,17 +3025,17 @@ function library.object_textbox(box, text, callback, finishedcallback)
 		local keyqueue = 0
 
 		if not connection then
-			connection = library:connect(services.InputService.InputBegan, function(input)
+			connection = library:connect(services.UserInputService.InputBegan, function(input)
 				if input.UserInputType == Enum.UserInputType.Keyboard then
 					if input.KeyCode ~= Enum.KeyCode.Backspace then
-						local str = services.InputService:GetStringForKeyCode(input.KeyCode)
+						local str = services.UserInputService:GetStringForKeyCode(input.KeyCode)
 						if table.find(allowedcharacters, str) then
 							keyqueue = keyqueue + 1
 							local currentqueue = keyqueue
 
 							if
-								not services.InputService:IsKeyDown(Enum.KeyCode.RightShift)
-								and not services.InputService:IsKeyDown(Enum.KeyCode.LeftShift)
+								not services.UserInputService:IsKeyDown(Enum.KeyCode.RightShift)
+								and not services.UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
 							then
 								text.Text = text.Text .. str:lower()
 								callback(text.Text)
@@ -3045,7 +3045,10 @@ function library.object_textbox(box, text, callback, finishedcallback)
 								coroutine.wrap(function()
 									task.wait(0.5)
 
-									while services.InputService:IsKeyDown(input.KeyCode) and currentqueue == keyqueue do
+									while
+										services.UserInputService:IsKeyDown(input.KeyCode)
+										and currentqueue == keyqueue
+									do
 										text.Text = text.Text .. str:lower()
 										callback(text.Text)
 
@@ -3059,7 +3062,10 @@ function library.object_textbox(box, text, callback, finishedcallback)
 								coroutine.wrap(function()
 									task.wait(0.5)
 
-									while services.InputService:IsKeyDown(input.KeyCode) and currentqueue == keyqueue do
+									while
+										services.UserInputService:IsKeyDown(input.KeyCode)
+										and currentqueue == keyqueue
+									do
 										text.Text = text.Text .. (shiftcharacters[str] or str:upper())
 										callback(text.Text)
 
@@ -3086,7 +3092,7 @@ function library.object_textbox(box, text, callback, finishedcallback)
 
 			local backspacequeue = 0
 
-			backspaceconnection = library:connect(services.InputService.InputBegan, function(input)
+			backspaceconnection = library:connect(services.UserInputService.InputBegan, function(input)
 				if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.Backspace then
 					backspacequeue = backspacequeue + 1
 
@@ -3099,7 +3105,7 @@ function library.object_textbox(box, text, callback, finishedcallback)
 						task.wait(0.5)
 
 						if backspacequeue == currentqueue then
-							while services.InputService:IsKeyDown(Enum.KeyCode.Backspace) do
+							while services.UserInputService:IsKeyDown(Enum.KeyCode.Backspace) do
 								text.Text = text.Text:sub(1, -2)
 								callback(text.Text)
 
@@ -3611,7 +3617,7 @@ function library:new(cfg)
 			end
 			--
 			list_content.MouseEnter:Connect(function()
-				scroll_connect = library:connect(services.InputService.InputChanged, function(input)
+				scroll_connect = library:connect(services.UserInputService.InputChanged, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseWheel then
 						local down = input.Position.Z < 0 and true or false
 						if down then
@@ -4113,7 +4119,7 @@ function library:new(cfg)
 			end
 			--
 			list_content.MouseEnter:Connect(function()
-				scroll_connect = library:connect(services.InputService.InputChanged, function(input)
+				scroll_connect = library:connect(services.UserInputService.InputChanged, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseWheel then
 						local down = input.Position.Z < 0 and true or false
 						if down then
@@ -4652,7 +4658,7 @@ function library:new(cfg)
 						end
 					end
 
-					library:connect(services.InputService.InputBegan, function(inp)
+					library:connect(services.UserInputService.InputBegan, function(inp)
 						if (inp.KeyCode == key or inp.UserInputType == key) and not binding then
 							if key_mode == "Hold" then
 								if flag then
@@ -4684,7 +4690,7 @@ function library:new(cfg)
 							keytext.Text = "[-]"
 							library:change_object_theme(keytext, "Accent")
 
-							binding = library:connect(services.InputService.InputBegan, function(input, gpe)
+							binding = library:connect(services.UserInputService.InputBegan, function(input, gpe)
 								set(
 									input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 										or input.UserInputType
@@ -4700,7 +4706,7 @@ function library:new(cfg)
 						end
 					end)
 
-					library:connect(services.InputService.InputEnded, function(inp)
+					library:connect(services.UserInputService.InputEnded, function(inp)
 						if key_mode == "Hold" then
 							if key ~= "" or key ~= nil then
 								if inp.KeyCode == key or inp.UserInputType == key then
@@ -4953,7 +4959,7 @@ function library:new(cfg)
 					end
 				end)
 
-				library:connect(services.InputService.InputChanged, function(input)
+				library:connect(services.UserInputService.InputChanged, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseMovement then
 						if sliding then
 							slide(input)
@@ -5719,7 +5725,7 @@ function library:new(cfg)
 					end
 				end
 
-				library:connect(services.InputService.InputBegan, function(inp)
+				library:connect(services.UserInputService.InputBegan, function(inp)
 					if (inp.KeyCode == key or inp.UserInputType == key) and not binding then
 						if key_mode == "Hold" then
 							if flag then
@@ -5751,7 +5757,7 @@ function library:new(cfg)
 						keytext.Text = "[-]"
 						library:change_object_theme(keytext, "Accent")
 
-						binding = library:connect(services.InputService.InputBegan, function(input, gpe)
+						binding = library:connect(services.UserInputService.InputBegan, function(input, gpe)
 							set(
 								input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 									or input.UserInputType
@@ -5767,7 +5773,7 @@ function library:new(cfg)
 					end
 				end)
 
-				library:connect(services.InputService.InputEnded, function(inp)
+				library:connect(services.UserInputService.InputEnded, function(inp)
 					if key_mode == "Hold" then
 						if key ~= "" or key ~= nil then
 							if inp.KeyCode == key or inp.UserInputType == key then
@@ -6688,7 +6694,7 @@ function library:new(cfg)
 							end
 						end
 
-						library:connect(services.InputService.InputBegan, function(inp)
+						library:connect(services.UserInputService.InputBegan, function(inp)
 							if (inp.KeyCode == key or inp.UserInputType == key) and not binding then
 								if key_mode == "Hold" then
 									if flag then
@@ -6720,7 +6726,7 @@ function library:new(cfg)
 								keytext.Text = "[-]"
 								library:change_object_theme(keytext, "Accent")
 
-								binding = library:connect(services.InputService.InputBegan, function(input, gpe)
+								binding = library:connect(services.UserInputService.InputBegan, function(input, gpe)
 									set(
 										input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 											or input.UserInputType
@@ -6736,7 +6742,7 @@ function library:new(cfg)
 							end
 						end)
 
-						library:connect(services.InputService.InputEnded, function(inp)
+						library:connect(services.UserInputService.InputEnded, function(inp)
 							if key_mode == "Hold" then
 								if key ~= "" or key ~= nil then
 									if inp.KeyCode == key or inp.UserInputType == key then
@@ -6996,7 +7002,7 @@ function library:new(cfg)
 						end
 					end)
 
-					library:connect(services.InputService.InputChanged, function(input)
+					library:connect(services.UserInputService.InputChanged, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							if sliding then
 								slide(input)
@@ -7792,7 +7798,7 @@ function library:new(cfg)
 						end
 					end
 
-					library:connect(services.InputService.InputBegan, function(inp)
+					library:connect(services.UserInputService.InputBegan, function(inp)
 						if (inp.KeyCode == key or inp.UserInputType == key) and not binding then
 							if key_mode == "Hold" then
 								if flag then
@@ -7824,7 +7830,7 @@ function library:new(cfg)
 							keytext.Text = "[-]"
 							library:change_object_theme(keytext, "Accent")
 
-							binding = library:connect(services.InputService.InputBegan, function(input, gpe)
+							binding = library:connect(services.UserInputService.InputBegan, function(input, gpe)
 								set(
 									input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 										or input.UserInputType
@@ -7840,7 +7846,7 @@ function library:new(cfg)
 						end
 					end)
 
-					library:connect(services.InputService.InputEnded, function(inp)
+					library:connect(services.UserInputService.InputEnded, function(inp)
 						if key_mode == "Hold" then
 							if key ~= "" or key ~= nil then
 								if inp.KeyCode == key or inp.UserInputType == key then
