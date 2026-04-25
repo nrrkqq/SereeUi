@@ -207,26 +207,26 @@ local Themes = {
 }
 local ThemeObjects = {}
 local Library = {
-	priorities = {},
-	friends = {},
-	notiflist = { Ntifs = {}, interval = 12 },
-	settings = { folder_name = "seere/" .. StartUpArgs[1], DefaultAccent = Color3.fromRGB(255, 255, 255) },
-	drawings = {},
-	theme = table.clone(Themes.Default),
-	currentcolor = nil,
+	Priorities = {},
+	Friends = {},
+	NotifList = { Ntifs = {}, interval = 12 },
+	Settings = { folder_name = "seere/" .. StartUpArgs[1], DefaultAccent = Color3.fromRGB(255, 255, 255) },
+	Drawings = {},
+	Theme = table.clone(Themes.Default),
+	CurrentColor = nil,
 	Flags = {},
-	open = false,
-	mousestate = InputService.MouseIconEnabled,
-	cursor = nil,
-	holder = nil,
-	connections = {},
-	notifications = {},
-	gradient = nil,
+	IsOpen = false,
+	MouseState = InputService.MouseIconEnabled,
+	Cursor = nil,
+	Holder = nil,
+	Connections = {},
+	Notifications = {},
+	Gradient = nil,
 }
 local Decode = (crypt and crypt.base64decode) or base64_decode
 local Flags = {}
 local ConfigIgnores = {}
-local VisValues = {}
+--// local VisValues = {}
 local Keys = {
 	[Enum.KeyCode.LeftShift] = "LS",
 	[Enum.KeyCode.RightShift] = "RS",
@@ -394,10 +394,11 @@ function Library:Instance(a, b)
 	end
 	return instance
 end
-local ScreenGui = Library:instance("ScreenGui")
+
+local ScreenGui = Library:Instance("ScreenGui")
 ScreenGui.Parent = CoreGui
 ScreenGui.Enabled = true
-Library:instance("ImageButton", {
+Library:Instance("ImageButton", {
 	Parent = ScreenGui,
 	Visible = true,
 	Modal = true,
@@ -406,10 +407,10 @@ Library:instance("ImageButton", {
 	Transparency = 1,
 })
 
-local Cursor1 = Library:create("Quad", { Filled = true, Theme = "Accent", ZIndex = 1500 })
-local Cursor2 = Library:create("Quad", { Filled = true, Color = Color3.new(), ZIndex = 1499 })
+local Cursor1 = Library:Create("Quad", { Filled = true, Theme = "Accent", ZIndex = 1500 })
+local Cursor2 = Library:Create("Quad", { Filled = true, Color = Color3.new(), ZIndex = 1499 })
 
-Library:connect(RunService.RenderStepped, function()
+Library:Connect(RunService.RenderStepped, function()
 	if Cursor1.Visible then
 		local pos = InputService:GetMouseLocation()
 		Cursor1.PointA = pos + Vector2.new(0, 3)
@@ -532,7 +533,7 @@ function Library.CreateDropdown(
 	section,
 	sectioncontent
 )
-	local dropdown = Library:create("Square", {
+	local dropdown = Library:Create("Square", {
 		Filled = true,
 		Visible = true,
 		Thickness = 0,
@@ -551,10 +552,10 @@ function Library.CreateDropdown(
 		dropdown.Color = Color3.fromRGB(25, 25, 25)
 	end)
 
-	local outline1 = Library:outline(dropdown, Color3.fromRGB(44, 44, 44), 14)
-	Library:outline(outline1, Color3.new(0, 0, 0), 14)
+	local outline1 = Library:Outline(dropdown, Color3.fromRGB(44, 44, 44), 14)
+	Library:Outline(outline1, Color3.new(0, 0, 0), 14)
 
-	local value = Library:create("Text", {
+	local value = Library:Create("Text", {
 		Text = "",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -565,7 +566,7 @@ function Library.CreateDropdown(
 		Parent = dropdown,
 	})
 
-	local icon = Library:create("Text", {
+	local icon = Library:Create("Text", {
 		Text = "-",
 		Transparency = 1,
 		Visible = true,
@@ -578,7 +579,7 @@ function Library.CreateDropdown(
 		Outline = true,
 	})
 
-	local contentframe = Library:create("Square", {
+	local contentframe = Library:Create("Square", {
 		Filled = true,
 		Visible = false,
 		Thickness = 0,
@@ -591,10 +592,10 @@ function Library.CreateDropdown(
 
 	table.insert(Drops, contentframe)
 
-	local outline2 = Library:outline(contentframe, Color3.fromRGB(44, 44, 44), 17)
-	Library:outline(outline2, Color3.new(0, 0, 0), 17)
+	local outline2 = Library:Outline(contentframe, Color3.fromRGB(44, 44, 44), 17)
+	Library:Outline(outline2, Color3.new(0, 0, 0), 17)
 
-	local contentholder = Library:create("Square", {
+	local contentholder = Library:Create("Square", {
 		Transparency = 0,
 		Size = UDim2.new(1, -6, 1, -6),
 		Position = UDim2.new(0, 3, 0, 3),
@@ -604,8 +605,8 @@ function Library.CreateDropdown(
 	contentholder:AddListLayout(3)
 
 	local mouseover = false
-
 	local opened = false
+
 	dropdown.MouseButton1Click:Connect(function()
 		for i, v in next, Drops do
 			if v ~= contentframe then
@@ -627,7 +628,7 @@ function Library.CreateDropdown(
 		button.MouseButton1Click:Connect(function()
 			for opt, tbl in next, optioninstances do
 				if opt ~= option then
-					Library:change_object_theme(tbl.text, "Text")
+					Library:ChangeObjectTheme(tbl.text, "Text")
 				end
 			end
 
@@ -635,7 +636,7 @@ function Library.CreateDropdown(
 
 			value.Text = option
 
-			Library:change_object_theme(text, "Accent")
+			Library:ChangeObjectTheme(text, "Accent")
 
 			Library.Flags[flag] = option
 			callback(option)
@@ -648,7 +649,7 @@ function Library.CreateDropdown(
 
 			countindex[option] = count + 1
 
-			local button = Library:create("Square", {
+			local button = Library:Create("Square", {
 				Filled = true,
 				Transparency = 0,
 				Thickness = 1,
@@ -660,7 +661,7 @@ function Library.CreateDropdown(
 
 			optioninstances[option].button = button
 
-			local title = Library:create("Text", {
+			local title = Library:Create("Text", {
 				Text = option,
 				Font = Drawing.Fonts.Plex,
 				Size = 13,
@@ -692,7 +693,7 @@ function Library.CreateDropdown(
 		contentholder:MakeScrollable()
 		local scroll_connect = nil
 
-		local scrollbar_outline = Library:create("Square", {
+		local scrollbar_outline = Library:Create("Square", {
 			Transparency = 1,
 			Size = UDim2.new(0, 4, 1, 0),
 			Position = UDim2.new(1, -4, 0, 0),
@@ -704,7 +705,7 @@ function Library.CreateDropdown(
 			Filled = true,
 		})
 
-		local scrollbar = Library:create("Square", {
+		local scrollbar = Library:Create("Square", {
 			Transparency = 1,
 			Size = UDim2.new(0, 3, count == 0 and 1 or count / scrollingmax, 0),
 			Position = UDim2.new(1, -3, 0, 0),
@@ -723,7 +724,7 @@ function Library.CreateDropdown(
 		end
 
 		contentholder.MouseEnter:Connect(function()
-			scroll_connect = Library:connect(InputService.InputChanged, function(input)
+			scroll_connect = Library:Connect(InputService.InputChanged, function(input)
 				if input.UserInputType == Enum.UserInputType.MouseWheel then
 					local down = input.Position.Z < 0 and true or false
 					if down then
@@ -745,9 +746,10 @@ function Library.CreateDropdown(
 
 		contentholder.MouseLeave:Connect(function()
 			if scroll_connect then
-				Library:disconnect(scroll_connect)
+				Library:Disconnect(scroll_connect)
 			end
 		end)
+
 		refreshscroll()
 	end
 
@@ -755,7 +757,7 @@ function Library.CreateDropdown(
 	set = function(option)
 		for opt, tbl in next, optioninstances do
 			if opt ~= option then
-				Library:change_object_theme(tbl.text, "Text")
+				Library:ChangeObjectTheme(tbl.text, "Text")
 			end
 		end
 
@@ -764,7 +766,7 @@ function Library.CreateDropdown(
 
 			value.Text = option
 
-			Library:change_object_theme(optioninstances[option].text, "Accent")
+			Library:ChangeObjectTheme(optioninstances[option].text, "Accent")
 
 			Library.Flags[flag] = chosen
 			callback(chosen)
@@ -888,7 +890,7 @@ function Library.CreateList(
 )
 	scrollable = true
 
-	local list = Library:create("Square", {
+	local list = Library:Create("Square", {
 		Filled = true,
 		Visible = true,
 		Thickness = 0,
@@ -900,7 +902,7 @@ function Library.CreateList(
 		Parent = holder,
 	})
 
-	local contentframe = Library:create("Square", {
+	local contentframe = Library:Create("Square", {
 		Filled = true,
 		Visible = true,
 		Thickness = 0,
@@ -911,10 +913,10 @@ function Library.CreateList(
 		Parent = list,
 	})
 
-	local outline2 = Library:outline(contentframe, Color3.fromRGB(44, 44, 44), 17)
-	Library:outline(outline2, Color3.new(0, 0, 0), 17)
+	local outline2 = Library:Outline(contentframe, Color3.fromRGB(44, 44, 44), 17)
+	Library:Outline(outline2, Color3.new(0, 0, 0), 17)
 
-	local contentholder = Library:create("Square", {
+	local contentholder = Library:Create("Square", {
 		Transparency = 0,
 		Size = UDim2.new(1, -6, 1, -6),
 		Position = UDim2.new(0, 3, 0, 3),
@@ -935,13 +937,13 @@ function Library.CreateList(
 		button.MouseButton1Click:Connect(function()
 			for opt, tbl in next, optioninstances do
 				if opt ~= option then
-					Library:change_object_theme(tbl.text, "Text")
+					Library:ChangeObjectTheme(tbl.text, "Text")
 				end
 			end
 
 			chosen = option
 
-			Library:change_object_theme(text, "Accent")
+			Library:ChangeObjectTheme(text, "Accent")
 
 			Library.Flags[flag] = option
 			callback(option)
@@ -954,7 +956,7 @@ function Library.CreateList(
 
 			countindex[option] = count + 1
 
-			local button = Library:create("Square", {
+			local button = Library:Create("Square", {
 				Filled = true,
 				Transparency = 0,
 				Thickness = 1,
@@ -966,7 +968,7 @@ function Library.CreateList(
 
 			optioninstances[option].button = button
 
-			local title = Library:create("Text", {
+			local title = Library:Create("Text", {
 				Text = option,
 				Font = Drawing.Fonts.Plex,
 				Size = 13,
@@ -998,7 +1000,7 @@ function Library.CreateList(
 		contentholder:MakeScrollable()
 		local scroll_connect = nil
 
-		local scrollbar_outline = Library:create("Square", {
+		local scrollbar_outline = Library:Create("Square", {
 			Transparency = 1,
 			Size = UDim2.new(0, 4, 1, 0),
 			Position = UDim2.new(1, -4, 0, 0),
@@ -1010,7 +1012,7 @@ function Library.CreateList(
 			Filled = true,
 		})
 
-		local scrollbar = Library:create("Square", {
+		local scrollbar = Library:Create("Square", {
 			Transparency = 1,
 			Size = UDim2.new(0, 3, count == 0 and 1 or count / scrollingmax, 0),
 			Position = UDim2.new(1, -3, 0, 0),
@@ -1029,7 +1031,7 @@ function Library.CreateList(
 		end
 
 		contentholder.MouseEnter:Connect(function()
-			scroll_connect = Library:connect(InputService.InputChanged, function(input)
+			scroll_connect = Library:Connect(InputService.InputChanged, function(input)
 				if input.UserInputType == Enum.UserInputType.MouseWheel then
 					local down = input.Position.Z < 0 and true or false
 					if down then
@@ -1051,7 +1053,7 @@ function Library.CreateList(
 
 		contentholder.MouseLeave:Connect(function()
 			if scroll_connect then
-				Library:disconnect(scroll_connect)
+				Library:Disconnect(scroll_connect)
 			end
 		end)
 		refreshscroll()
@@ -1061,14 +1063,14 @@ function Library.CreateList(
 	set = function(option)
 		for opt, tbl in next, optioninstances do
 			if opt ~= option then
-				Library:change_object_theme(tbl.text, "Text")
+				Library:ChangeObjectTheme(tbl.text, "Text")
 			end
 		end
 
 		if table.find(content, option) then
 			chosen = option
 
-			Library:change_object_theme(optioninstances[option].text, "Accent")
+			Library:ChangeObjectTheme(optioninstances[option].text, "Accent")
 
 			Library.Flags[flag] = chosen
 			callback(chosen)
@@ -1188,7 +1190,7 @@ function Library.CreateSlider(cfg)
 	local callback = cfg.callback or function() end
 	local lol = cfg.parent or cfg.Parent or nil
 
-	local holder = Library:create("Square", {
+	local holder = Library:Create("Square", {
 		Parent = lol,
 		Visible = true,
 		Transparency = 0,
@@ -1198,7 +1200,7 @@ function Library.CreateSlider(cfg)
 		ZIndex = 30,
 	})
 
-	local slider_frame = Library:create("Square", {
+	local slider_frame = Library:Create("Square", {
 		Parent = holder,
 		Visible = true,
 		Transparency = 1,
@@ -1210,9 +1212,9 @@ function Library.CreateSlider(cfg)
 		Position = name and UDim2.new(0, 23, 0, 14) or UDim2.new(0, 23, 0, 3),
 	})
 	do
-		local outline = Library:outline(slider_frame, Color3.fromRGB(0, 0, 0), 30)
+		local outline = Library:Outline(slider_frame, Color3.fromRGB(0, 0, 0), 30)
 	end
-	Library:create("Image", {
+	Library:Create("Image", {
 		Data = Images.gradient,
 		Transparency = 1,
 		Visible = true,
@@ -1222,7 +1224,7 @@ function Library.CreateSlider(cfg)
 	})
 
 	if name then
-		local slider_title = Library:create("Text", {
+		local slider_title = Library:Create("Text", {
 			Text = name,
 			Parent = holder,
 			Visible = true,
@@ -1237,7 +1239,7 @@ function Library.CreateSlider(cfg)
 		})
 	end
 
-	local slider_fill = Library:create("Square", {
+	local slider_fill = Library:Create("Square", {
 		Parent = slider_frame,
 		Visible = true,
 		Transparency = 1,
@@ -1249,7 +1251,7 @@ function Library.CreateSlider(cfg)
 		Position = UDim2.new(0, 0, 0, 0),
 	})
 
-	local slider_value = Library:create("Text", {
+	local slider_value = Library:Create("Text", {
 		Text = text,
 		Parent = slider_fill,
 		Visible = true,
@@ -1263,7 +1265,7 @@ function Library.CreateSlider(cfg)
 		ZIndex = 31,
 	})
 
-	local slider_drag = Library:create("Square", {
+	local slider_drag = Library:Create("Square", {
 		Parent = slider_frame,
 		Visible = true,
 		Transparency = 0,
@@ -1299,40 +1301,40 @@ function Library.CreateSlider(cfg)
 	end
 
 	holder.MouseEnter:Connect(function()
-		Library:change_object_theme(slider_frame, "Toggle Background Highlight")
+		Library:ChangeObjectTheme(slider_frame, "Toggle Background Highlight")
 	end)
 
 	holder.MouseLeave:Connect(function()
-		Library:change_object_theme(slider_frame, "Toggle Background")
+		Library:ChangeObjectTheme(slider_frame, "Toggle Background")
 	end)
 
-	Library:connect(slider_drag.InputBegan, function(input)
+	Library:Connect(slider_drag.InputBegan, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			sliding = true
 			slide(input)
 		end
 	end)
 
-	Library:connect(slider_drag.InputEnded, function(input)
+	Library:Connect(slider_drag.InputEnded, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			sliding = false
 		end
 	end)
 
-	Library:connect(slider_fill.InputBegan, function(input)
+	Library:Connect(slider_fill.InputBegan, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			sliding = true
 			slide(input)
 		end
 	end)
 
-	Library:connect(slider_fill.InputEnded, function(input)
+	Library:Connect(slider_fill.InputEnded, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 then
 			sliding = false
 		end
 	end)
 
-	Library:connect(InputService.InputChanged, function(input)
+	Library:Connect(InputService.InputChanged, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			if sliding then
 				slide(input)
@@ -1359,7 +1361,7 @@ function Library.CreateMultibox(
 	section,
 	sectioncontent
 )
-	local dropdown = Library:create("Square", {
+	local dropdown = Library:Create("Square", {
 		Filled = true,
 		Visible = true,
 		Thickness = 0,
@@ -1378,10 +1380,10 @@ function Library.CreateMultibox(
 		dropdown.Color = Color3.fromRGB(25, 25, 25)
 	end)
 
-	local outline1 = Library:outline(dropdown, Color3.fromRGB(44, 44, 44), 14)
-	Library:outline(outline1, Color3.new(0, 0, 0), 14)
+	local outline1 = Library:Outline(dropdown, Color3.fromRGB(44, 44, 44), 14)
+	Library:Outline(outline1, Color3.new(0, 0, 0), 14)
 
-	local value = Library:create("Text", {
+	local value = Library:Create("Text", {
 		Text = "",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -1392,7 +1394,7 @@ function Library.CreateMultibox(
 		Parent = dropdown,
 	})
 
-	local icon = Library:create("Text", {
+	local icon = Library:Create("Text", {
 		Text = "-",
 		Transparency = 1,
 		Visible = true,
@@ -1405,7 +1407,7 @@ function Library.CreateMultibox(
 		Outline = true,
 	})
 
-	local contentframe = Library:create("Square", {
+	local contentframe = Library:Create("Square", {
 		Filled = true,
 		Visible = false,
 		Thickness = 0,
@@ -1418,10 +1420,10 @@ function Library.CreateMultibox(
 
 	table.insert(Drops, contentframe)
 
-	local outline2 = Library:outline(contentframe, Color3.fromRGB(44, 44, 44), 17)
-	Library:outline(outline2, Color3.new(0, 0, 0), 17)
+	local outline2 = Library:Outline(contentframe, Color3.fromRGB(44, 44, 44), 17)
+	Library:Outline(outline2, Color3.new(0, 0, 0), 17)
 
-	local contentholder = Library:create("Square", {
+	local contentholder = Library:Create("Square", {
 		Transparency = 0,
 		Size = UDim2.new(1, -6, 1, -6),
 		Position = UDim2.new(0, 3, 0, 3),
@@ -1474,13 +1476,13 @@ function Library.CreateMultibox(
 					value.Text = #chosen == 0 and "none"
 						or table.concat(textchosen, ", ") .. (cutobject and ", ..." or "")
 
-					Library:change_object_theme(text, "Text")
+					Library:ChangeObjectTheme(text, "Text")
 
 					Library.Flags[flag] = chosen
 					callback(chosen)
 				else
 					if #chosen == max then
-						Library:change_object_theme(optioninstances[chosen[1]].text, "Text")
+						Library:ChangeObjectTheme(optioninstances[chosen[1]].text, "Text")
 
 						table.remove(chosen, 1)
 					end
@@ -1505,7 +1507,7 @@ function Library.CreateMultibox(
 					value.Text = #chosen == 0 and "none"
 						or table.concat(textchosen, ", ") .. (cutobject and ", ..." or "")
 
-					Library:change_object_theme(text, "Accent")
+					Library:ChangeObjectTheme(text, "Accent")
 
 					Library.Flags[flag] = chosen
 					callback(chosen)
@@ -1520,7 +1522,7 @@ function Library.CreateMultibox(
 
 			countindex[option] = count + 1
 
-			local button = Library:create("Square", {
+			local button = Library:Create("Square", {
 				Filled = true,
 				Transparency = 0,
 				Thickness = 1,
@@ -1532,7 +1534,7 @@ function Library.CreateMultibox(
 
 			optioninstances[option].button = button
 
-			local title = Library:create("Text", {
+			local title = Library:Create("Text", {
 				Text = option,
 				Font = Drawing.Fonts.Plex,
 				Size = 13,
@@ -1564,7 +1566,7 @@ function Library.CreateMultibox(
 		contentholder:MakeScrollable()
 		local scroll_connect = nil
 
-		local scrollbar_outline = Library:create("Square", {
+		local scrollbar_outline = Library:Create("Square", {
 			Transparency = 1,
 			Size = UDim2.new(0, 4, 1, 0),
 			Position = UDim2.new(1, -4, 0, 0),
@@ -1576,7 +1578,7 @@ function Library.CreateMultibox(
 			Filled = true,
 		})
 
-		local scrollbar = Library:create("Square", {
+		local scrollbar = Library:Create("Square", {
 			Transparency = 1,
 			Size = UDim2.new(0, 3, count == 0 and 1 or count / scrollingmax, 0),
 			Position = UDim2.new(1, -3, 0, 0),
@@ -1595,7 +1597,7 @@ function Library.CreateMultibox(
 		end
 
 		contentholder.MouseEnter:Connect(function()
-			scroll_connect = Library:connect(InputService.InputChanged, function(input)
+			scroll_connect = Library:Connect(InputService.InputChanged, function(input)
 				if input.UserInputType == Enum.UserInputType.MouseWheel then
 					local down = input.Position.Z < 0 and true or false
 					if down then
@@ -1617,7 +1619,7 @@ function Library.CreateMultibox(
 
 		contentholder.MouseLeave:Connect(function()
 			if scroll_connect then
-				Library:disconnect(scroll_connect)
+				Library:Disconnect(scroll_connect)
 			end
 		end)
 		refreshscroll()
@@ -1631,7 +1633,7 @@ function Library.CreateMultibox(
 
 			for opt, tbl in next, optioninstances do
 				if not table.find(option, opt) then
-					Library:change_object_theme(tbl.text, "Text")
+					Library:ChangeObjectTheme(tbl.text, "Text")
 				end
 			end
 
@@ -1639,7 +1641,7 @@ function Library.CreateMultibox(
 				if table.find(content, opt) and #chosen < max then
 					table.insert(chosen, opt)
 
-					Library:change_object_theme(optioninstances[opt].text, "Accent")
+					Library:ChangeObjectTheme(optioninstances[opt].text, "Accent")
 				end
 			end
 
@@ -1764,7 +1766,7 @@ function Library.CreateMultibox(
 end
 
 function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, flag, callback, offset)
-	local icon = Library:create("Square", {
+	local icon = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Color = default,
@@ -1775,9 +1777,9 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		ZIndex = 30,
 	})
 
-	local outline = Library:outline(icon, Color3.fromRGB(0, 0, 0))
+	local outline = Library:Outline(icon, Color3.fromRGB(0, 0, 0))
 
-	local gradient = Library:create("Image", {
+	local gradient = Library:Create("Image", {
 		Data = Images.gradient,
 		Transparency = 1,
 		Visible = true,
@@ -1786,7 +1788,7 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		ZIndex = 30,
 	})
 
-	local window = Library:create("Square", {
+	local window = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = icon,
@@ -1799,10 +1801,10 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 
 	table.insert(InnerPickers, window)
 
-	local outline1 = Library:outline(window, Color3.fromRGB(50, 50, 50), 33)
-	Library:outline(outline1, Color3.fromRGB(0, 0, 0), 33)
+	local outline1 = Library:Outline(window, Color3.fromRGB(50, 50, 50), 33)
+	Library:Outline(outline1, Color3.fromRGB(0, 0, 0), 33)
 
-	local saturation = Library:create("Square", {
+	local saturation = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = window,
@@ -1812,9 +1814,9 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		ZIndex = 34,
 	})
 
-	Library:outline(saturation, Color3.fromRGB(0, 0, 0))
+	Library:Outline(saturation, Color3.fromRGB(0, 0, 0))
 
-	Library:create("Image", {
+	Library:Create("Image", {
 		Size = UDim2.new(1, 0, 1, 0),
 		ZIndex = 35,
 		Parent = saturation,
@@ -1823,7 +1825,7 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		),
 	})
 
-	local saturationpicker = Library:create("Square", {
+	local saturationpicker = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = saturation,
@@ -1832,9 +1834,9 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		ZIndex = 36,
 	})
 
-	Library:outline(saturationpicker, Color3.fromRGB(0, 0, 0))
+	Library:Outline(saturationpicker, Color3.fromRGB(0, 0, 0))
 
-	local hueframe = Library:create("Square", {
+	local hueframe = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = window,
@@ -1843,9 +1845,9 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		ZIndex = 34,
 	})
 
-	Library:outline(hueframe, Color3.fromRGB(0, 0, 0))
+	Library:Outline(hueframe, Color3.fromRGB(0, 0, 0))
 
-	Library:create("Image", {
+	Library:Create("Image", {
 		Size = UDim2.new(1, 0, 1, 0),
 		ZIndex = 35,
 		Parent = hueframe,
@@ -1854,7 +1856,7 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		),
 	})
 
-	local huepicker = Library:create("Square", {
+	local huepicker = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = hueframe,
@@ -1864,9 +1866,9 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		Visible = false,
 	})
 
-	Library:outline(huepicker, Color3.fromRGB(0, 0, 0))
+	Library:Outline(huepicker, Color3.fromRGB(0, 0, 0))
 
-	local alphaframe = Library:create("Square", {
+	local alphaframe = Library:Create("Square", {
 		Filled = true,
 		Thickness = 1,
 		Size = UDim2.new(0, 15, 0, 150),
@@ -1875,9 +1877,9 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		Parent = window,
 	})
 
-	Library:outline(alphaframe, Color3.fromRGB(0, 0, 0))
+	Library:Outline(alphaframe, Color3.fromRGB(0, 0, 0))
 
-	Library:create("Image", {
+	Library:Create("Image", {
 		Size = UDim2.new(1, 0, 1, 0),
 		ZIndex = 36,
 		Transparency = 1,
@@ -1887,7 +1889,7 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		),
 	})
 
-	local alphapicker = Library:create("Square", {
+	local alphapicker = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = alphaframe,
@@ -1897,9 +1899,9 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		Visible = true,
 	})
 
-	Library:outline(alphapicker, Color3.fromRGB(0, 0, 0))
+	Library:Outline(alphapicker, Color3.fromRGB(0, 0, 0))
 
-	local rgbinput = Library:create("Square", {
+	local rgbinput = Library:Create("Square", {
 		Filled = true,
 		Transparency = 1,
 		Thickness = 1,
@@ -1910,10 +1912,10 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		Parent = window,
 	})
 
-	local outline2 = Library:outline(rgbinput, Color3.fromRGB(50, 50, 50))
-	Library:outline(outline2, Color3.fromRGB(0, 0, 0))
+	local outline2 = Library:Outline(rgbinput, Color3.fromRGB(50, 50, 50))
+	Library:Outline(outline2, Color3.fromRGB(0, 0, 0))
 
-	local text = Library:create("Text", {
+	local text = Library:Create("Text", {
 		Text = string.format(
 			"%s, %s, %s",
 			math.floor(default.R * 255),
@@ -2102,7 +2104,7 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 		end
 	end)
 
-	Library:connect(InputService.InputChanged, function(input)
+	Library:Connect(InputService.InputChanged, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			if slidingalpha then
 				updatealpha(input)
@@ -2160,7 +2162,7 @@ function Library.CreatePicker(cfg)
 	local defaultalpha = cfg.alpha or cfg.Alpha or 1
 	local lol = cfg.parent or cfg.Parent or nil
 
-	local holder = Library:create("Square", {
+	local holder = Library:Create("Square", {
 		Transparency = 0,
 		Filled = true,
 		Thickness = 1,
@@ -2169,7 +2171,7 @@ function Library.CreatePicker(cfg)
 		Parent = lol,
 	})
 
-	local title = Library:create("Text", {
+	local title = Library:Create("Text", {
 		Text = name,
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -2192,7 +2194,7 @@ function Library.CreatePicker(cfg)
 end
 
 function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, callback, offset)
-	local icon = Library:create("Square", {
+	local icon = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Color = default,
@@ -2203,9 +2205,9 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		ZIndex = 15,
 	})
 
-	local outline = Library:outline(icon, Color3.fromRGB(0, 0, 0))
+	local outline = Library:Outline(icon, Color3.fromRGB(0, 0, 0))
 
-	local gradient = Library:create("Image", {
+	local gradient = Library:Create("Image", {
 		Data = Images.gradient,
 		Transparency = 1,
 		Visible = true,
@@ -2214,7 +2216,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		ZIndex = 15,
 	})
 
-	local window = Library:create("Square", {
+	local window = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = icon,
@@ -2225,7 +2227,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		ZIndex = 20,
 	})
 
-	local colorpage = Library:create("Square", {
+	local colorpage = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Transparency = 0,
@@ -2236,7 +2238,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		ZIndex = 20,
 	})
 
-	local animationpage = Library:create("Square", {
+	local animationpage = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Transparency = 0,
@@ -2249,10 +2251,10 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 
 	table.insert(Pickers, window)
 
-	local outline1 = Library:outline(window, Color3.fromRGB(50, 50, 50), 21)
-	Library:outline(outline1, Color3.fromRGB(0, 0, 0), 21)
+	local outline1 = Library:Outline(window, Color3.fromRGB(50, 50, 50), 21)
+	Library:Outline(outline1, Color3.fromRGB(0, 0, 0), 21)
 
-	local saturation = Library:create("Square", {
+	local saturation = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = colorpage,
@@ -2262,9 +2264,9 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		ZIndex = 24,
 	})
 
-	Library:outline(saturation, Color3.fromRGB(0, 0, 0))
+	Library:Outline(saturation, Color3.fromRGB(0, 0, 0))
 
-	Library:create("Image", {
+	Library:Create("Image", {
 		Size = UDim2.new(1, 0, 1, 0),
 		ZIndex = 25,
 		Parent = saturation,
@@ -2273,7 +2275,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		),
 	})
 
-	local saturationpicker = Library:create("Square", {
+	local saturationpicker = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = saturation,
@@ -2283,9 +2285,9 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Visible = true,
 	})
 
-	Library:outline(saturationpicker, Color3.fromRGB(0, 0, 0))
+	Library:Outline(saturationpicker, Color3.fromRGB(0, 0, 0))
 
-	local hueframe = Library:create("Square", {
+	local hueframe = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = colorpage,
@@ -2294,9 +2296,9 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		ZIndex = 24,
 	})
 
-	Library:outline(hueframe, Color3.fromRGB(0, 0, 0))
+	Library:Outline(hueframe, Color3.fromRGB(0, 0, 0))
 
-	Library:create("Image", {
+	Library:Create("Image", {
 		Size = UDim2.new(1, 0, 1, 0),
 		ZIndex = 25,
 		Parent = hueframe,
@@ -2305,7 +2307,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		),
 	})
 
-	local huepicker = Library:create("Square", {
+	local huepicker = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = hueframe,
@@ -2315,9 +2317,9 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Visible = true,
 	})
 
-	Library:outline(huepicker, Color3.fromRGB(0, 0, 0))
+	Library:Outline(huepicker, Color3.fromRGB(0, 0, 0))
 
-	local alphaframe = Library:create("Square", {
+	local alphaframe = Library:Create("Square", {
 		Filled = true,
 		Thickness = 1,
 		Size = UDim2.new(0, 15, 0, 150),
@@ -2326,9 +2328,9 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Parent = colorpage,
 	})
 
-	Library:outline(alphaframe, Color3.fromRGB(0, 0, 0))
+	Library:Outline(alphaframe, Color3.fromRGB(0, 0, 0))
 
-	Library:create("Image", {
+	Library:Create("Image", {
 		Size = UDim2.new(1, 0, 1, 0),
 		ZIndex = 26,
 		Transparency = 1,
@@ -2338,7 +2340,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		),
 	})
 
-	local alphapicker = Library:create("Square", {
+	local alphapicker = Library:Create("Square", {
 		Filled = true,
 		Thickness = 0,
 		Parent = alphaframe,
@@ -2348,9 +2350,9 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Visible = true,
 	})
 
-	Library:outline(alphapicker, Color3.fromRGB(0, 0, 0))
+	Library:Outline(alphapicker, Color3.fromRGB(0, 0, 0))
 
-	local rgbinput = Library:create("Square", {
+	local rgbinput = Library:Create("Square", {
 		Filled = true,
 		Transparency = 1,
 		Thickness = 1,
@@ -2361,10 +2363,10 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Parent = colorpage,
 	})
 
-	local outline2 = Library:outline(rgbinput, Color3.fromRGB(50, 50, 50))
-	Library:outline(outline2, Color3.fromRGB(0, 0, 0))
+	local outline2 = Library:Outline(rgbinput, Color3.fromRGB(50, 50, 50))
+	Library:Outline(outline2, Color3.fromRGB(0, 0, 0))
 
-	local text = Library:create("Text", {
+	local text = Library:Create("Text", {
 		Text = string.format(
 			"%s, %s, %s",
 			math.floor(default.R * 255),
@@ -2381,7 +2383,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Parent = rgbinput,
 	})
 
-	local color_button = Library:create("Square", {
+	local color_button = Library:Create("Square", {
 		Parent = window,
 		Size = UDim2.new(0.5, -1, 0, 14),
 		Color = Color3.fromRGB(13, 13, 13),
@@ -2389,9 +2391,9 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Filled = true,
 		ZIndex = 21,
 	})
-	local color_outline = Library:outline(color_button, Color3.new(0, 0, 0), 20)
+	local color_outline = Library:Outline(color_button, Color3.new(0, 0, 0), 20)
 	color_outline.Visible = false
-	local color_text = Library:create("Text", {
+	local color_text = Library:Create("Text", {
 		Text = "color",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -2403,7 +2405,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Parent = color_button,
 	})
 
-	local animation_button = Library:create("Square", {
+	local animation_button = Library:Create("Square", {
 		Parent = window,
 		Size = UDim2.new(0.5, -1, 0, 14),
 		Position = UDim2.new(0.5, 1, 0, 0),
@@ -2412,8 +2414,8 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Filled = true,
 		ZIndex = 21,
 	})
-	local animation_outline = Library:outline(animation_button, Color3.new(0, 0, 0), 20)
-	local animation_text = Library:create("Text", {
+	local animation_outline = Library:Outline(animation_button, Color3.new(0, 0, 0), 20)
+	local animation_text = Library:Create("Text", {
 		Text = "animation",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -2425,7 +2427,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Parent = animation_button,
 	})
 
-	local animation_rainbow = Library:create("Text", {
+	local animation_rainbow = Library:Create("Text", {
 		Text = "rainbow",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -2436,7 +2438,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Outline = false,
 		Parent = animationpage,
 	})
-	Library:create("Text", {
+	Library:Create("Text", {
 		Text = "/",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -2447,7 +2449,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Outline = false,
 		Parent = animationpage,
 	})
-	local animation_lerp = Library:create("Text", {
+	local animation_lerp = Library:Create("Text", {
 		Text = "lerp",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -2458,7 +2460,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Outline = false,
 		Parent = animationpage,
 	})
-	Library:create("Text", {
+	Library:Create("Text", {
 		Text = "/",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -2469,7 +2471,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Outline = false,
 		Parent = animationpage,
 	})
-	local animation_fade = Library:create("Text", {
+	local animation_fade = Library:Create("Text", {
 		Text = "fade",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -2480,7 +2482,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Outline = false,
 		Parent = animationpage,
 	})
-	local animation_disabled = Library:create("Text", {
+	local animation_disabled = Library:Create("Text", {
 		Text = "disabled",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
@@ -2492,7 +2494,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Parent = animationpage,
 	})
 
-	local rainbow_page = Library:create("Square", {
+	local rainbow_page = Library:Create("Square", {
 		Filled = false,
 		Thickness = 0,
 		Transparency = 0,
@@ -2505,7 +2507,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 	})
 	rainbow_page:AddListLayout(3)
 
-	local lerp_page = Library:create("Square", {
+	local lerp_page = Library:Create("Square", {
 		Filled = false,
 		Thickness = 0,
 		Transparency = 0,
@@ -2518,7 +2520,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 	})
 	lerp_page:AddListLayout(3)
 
-	local fade_page = Library:create("Square", {
+	local fade_page = Library:Create("Square", {
 		Filled = false,
 		Thickness = 0,
 		Transparency = 0,
@@ -2609,7 +2611,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		end,
 	})
 
-	local rainbow_button = Library:create("Square", {
+	local rainbow_button = Library:Create("Square", {
 		Parent = animationpage,
 		Size = UDim2.new(0, Utility.textlength("rainbow", 2, 13).X, 0, Utility.textlength("rainbow", 2, 13).Y + 2),
 		Position = UDim2.new(0.5, -Utility.textlength("rainbow", 2, 13).X - 41, 0.5, -62),
@@ -2619,7 +2621,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Filled = false,
 		ZIndex = 21,
 	})
-	local lerp_button = Library:create("Square", {
+	local lerp_button = Library:Create("Square", {
 		Parent = animationpage,
 		Size = UDim2.new(0, Utility.textlength("lerp", 2, 13).X, 0, Utility.textlength("lerp", 2, 13).Y + 2),
 		Position = UDim2.new(0.5, Utility.textlength("lerp", 2, 13).X - 42, 0.5, -62),
@@ -2629,7 +2631,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Filled = false,
 		ZIndex = 21,
 	})
-	local fade_button = Library:create("Square", {
+	local fade_button = Library:Create("Square", {
 		Parent = animationpage,
 		Size = UDim2.new(0, Utility.textlength("fade", 2, 13).X, 0, Utility.textlength("fade", 2, 13).Y + 2),
 		Position = UDim2.new(0.5, Utility.textlength("fade", 2, 13).X + 17, 0.5, -62),
@@ -2639,7 +2641,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Filled = false,
 		ZIndex = 21,
 	})
-	local disable_button = Library:create("Square", {
+	local disable_button = Library:Create("Square", {
 		Parent = animationpage,
 		Size = UDim2.new(0, Utility.textlength("disabled", 2, 13).X, 0, Utility.textlength("disabled", 2, 13).Y + 2),
 		Position = UDim2.new(0.5, -26, 0.5, -82),
@@ -2724,10 +2726,10 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Library.Flags[flag .. "_FADE"] = fadetoggled
 	end
 	rainbow_button.MouseButton1Click:Connect(function()
-		Library:change_object_theme(animation_rainbow, "Accent")
-		Library:change_object_theme(animation_lerp, "Text")
-		Library:change_object_theme(animation_fade, "Text")
-		Library:change_object_theme(animation_disabled, "Text")
+		Library:ChangeObjectTheme(animation_rainbow, "Accent")
+		Library:ChangeObjectTheme(animation_lerp, "Text")
+		Library:ChangeObjectTheme(animation_fade, "Text")
+		Library:ChangeObjectTheme(animation_disabled, "Text")
 		setstate(true)
 		setlerpstate(false)
 		setfadestate(false)
@@ -2736,10 +2738,10 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		lerp_page.Visible = false
 	end)
 	lerp_button.MouseButton1Click:Connect(function()
-		Library:change_object_theme(animation_lerp, "Accent")
-		Library:change_object_theme(animation_rainbow, "Text")
-		Library:change_object_theme(animation_fade, "Text")
-		Library:change_object_theme(animation_disabled, "Text")
+		Library:ChangeObjectTheme(animation_lerp, "Accent")
+		Library:ChangeObjectTheme(animation_rainbow, "Text")
+		Library:ChangeObjectTheme(animation_fade, "Text")
+		Library:ChangeObjectTheme(animation_disabled, "Text")
 		setstate(false)
 		setlerpstate(true)
 		setfadestate(false)
@@ -2748,10 +2750,10 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		lerp_page.Visible = true
 	end)
 	fade_button.MouseButton1Click:Connect(function()
-		Library:change_object_theme(animation_lerp, "Text")
-		Library:change_object_theme(animation_rainbow, "Text")
-		Library:change_object_theme(animation_fade, "Accent")
-		Library:change_object_theme(animation_disabled, "Text")
+		Library:ChangeObjectTheme(animation_lerp, "Text")
+		Library:ChangeObjectTheme(animation_rainbow, "Text")
+		Library:ChangeObjectTheme(animation_fade, "Accent")
+		Library:ChangeObjectTheme(animation_disabled, "Text")
 		setstate(false)
 		setlerpstate(false)
 		setfadestate(true)
@@ -2760,10 +2762,10 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		lerp_page.Visible = false
 	end)
 	disable_button.MouseButton1Click:Connect(function()
-		Library:change_object_theme(animation_lerp, "Text")
-		Library:change_object_theme(animation_rainbow, "Text")
-		Library:change_object_theme(animation_fade, "Text")
-		Library:change_object_theme(animation_disabled, "Accent")
+		Library:ChangeObjectTheme(animation_lerp, "Text")
+		Library:ChangeObjectTheme(animation_rainbow, "Text")
+		Library:ChangeObjectTheme(animation_fade, "Text")
+		Library:ChangeObjectTheme(animation_disabled, "Accent")
 		setstate(false)
 		setlerpstate(false)
 		setfadestate(false)
@@ -2888,7 +2890,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		end
 	end)
 
-	Library:connect(InputService.InputChanged, function(input)
+	Library:Connect(InputService.InputChanged, function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement then
 			if slidingalpha then
 				updatealpha(input)
@@ -3007,7 +3009,7 @@ function Library.ObjectTextbox(box, text, callback, finishedcallback)
 		local keyqueue = 0
 
 		if not connection then
-			connection = Library:connect(InputService.InputBegan, function(input)
+			connection = Library:Connect(InputService.InputBegan, function(input)
 				if input.UserInputType == Enum.UserInputType.Keyboard then
 					if input.KeyCode ~= Enum.KeyCode.Backspace then
 						local str = InputService:GetStringForKeyCode(input.KeyCode)
@@ -3054,21 +3056,21 @@ function Library.ObjectTextbox(box, text, callback, finishedcallback)
 
 					if input.KeyCode == Enum.KeyCode.Return then
 						ContextActionService:UnbindAction("disablekeyboard")
-						Library:disconnect(backspaceconnection)
-						Library:disconnect(connection)
+						Library:Disconnect(backspaceconnection)
+						Library:Disconnect(connection)
 						finishedcallback(text.Text)
 					end
 				elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
 					ContextActionService:UnbindAction("disablekeyboard")
-					Library:disconnect(backspaceconnection)
-					Library:disconnect(connection)
+					Library:Disconnect(backspaceconnection)
+					Library:Disconnect(connection)
 					finishedcallback(text.Text)
 				end
 			end)
 
 			local backspacequeue = 0
 
-			backspaceconnection = Library:connect(InputService.InputBegan, function(input)
+			backspaceconnection = Library:Connect(InputService.InputBegan, function(input)
 				if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.Backspace then
 					backspacequeue = backspacequeue + 1
 
@@ -3095,14 +3097,14 @@ function Library.ObjectTextbox(box, text, callback, finishedcallback)
 	end)
 end
 
-function Library:New(cfg)
+function Library:new(cfg)
 	local window = { objs = {}, pages = {}, pages_buttons = {}, pages_titles = {}, pages_buttons_lines = {} }
 	local name_white = cfg.name or cfg.Name or "Title"
 	local name_color = cfg.sub or cfg.Sub or "Hook"
 	local offset = cfg.offset or cfg.offset or 0
 	local size = cfg.size or cfg.Size or Vector2.new(600, 650)
 
-	local window_outline = Library:create("Square", {
+	local window_outline = Library:Create("Square", {
 		Visible = false,
 		Transparency = 1,
 		Color = Color3.fromRGB(12, 12, 12),
@@ -3113,13 +3115,13 @@ function Library:New(cfg)
 		ZIndex = 10,
 	})
 	do
-		local outline = Library:outline(window_outline, Color3.fromRGB(50, 50, 50), 10)
-		Library:outline(outline, Color3.new(0, 0, 0), 10)
+		local outline = Library:Outline(window_outline, Color3.fromRGB(50, 50, 50), 10)
+		Library:Outline(outline, Color3.new(0, 0, 0), 10)
 	end
 
 	Library.Holder = window_outline
 
-	local window_inline = Library:create("Square", {
+	local window_inline = Library:Create("Square", {
 		Parent = window_outline,
 		Visible = true,
 		Transparency = 0,
@@ -3131,7 +3133,7 @@ function Library:New(cfg)
 		ZIndex = 11,
 	})
 
-	local window_accent = Library:create("Square", {
+	local window_accent = Library:Create("Square", {
 		Parent = window_inline,
 		Visible = true,
 		Transparency = 1,
@@ -3142,8 +3144,8 @@ function Library:New(cfg)
 		Filled = true,
 		ZIndex = 11,
 	})
-	Library:outline(window_accent, Color3.new(0, 0, 0), 11)
-	Library:create("Image", {
+	Library:Outline(window_accent, Color3.new(0, 0, 0), 11)
+	Library:Create("Image", {
 		Data = Images.gradient,
 		Transparency = 1,
 		Visible = true,
@@ -3152,7 +3154,7 @@ function Library:New(cfg)
 		ZIndex = 11,
 	})
 
-	local window_holder = Library:create("Square", {
+	local window_holder = Library:Create("Square", {
 		Parent = window_inline,
 		Visible = true,
 		Transparency = 1,
@@ -3164,11 +3166,11 @@ function Library:New(cfg)
 		ZIndex = 12,
 	})
 	do
-		local outline = Library:outline(window_holder, Color3.fromRGB(50, 50, 50), 12)
-		Library:outline(outline, Color3.fromRGB(0, 0, 0), 12)
+		local outline = Library:Outline(window_holder, Color3.fromRGB(50, 50, 50), 12)
+		Library:Outline(outline, Color3.fromRGB(0, 0, 0), 12)
 	end
 
-	local window_page_holder = Library:create("Square", {
+	local window_page_holder = Library:Create("Square", {
 		Parent = window_inline,
 		Visible = true,
 		Transparency = 0,
@@ -3180,7 +3182,7 @@ function Library:New(cfg)
 		ZIndex = 12,
 	})
 
-	local window_page_holder_inline = Library:create("Square", {
+	local window_page_holder_inline = Library:Create("Square", {
 		Parent = window_page_holder,
 		Visible = true,
 		Transparency = 0,
@@ -3191,7 +3193,7 @@ function Library:New(cfg)
 		ZIndex = 12,
 	})
 
-	local window_drag = Library:create("Square", {
+	local window_drag = Library:Create("Square", {
 		Parent = window_outline,
 		Visible = true,
 		Transparency = 0,
@@ -3202,7 +3204,7 @@ function Library:New(cfg)
 		ZIndex = 50,
 	})
 
-	local dragoutline = Library:create("Square", {
+	local dragoutline = Library:Create("Square", {
 		Size = UDim2.new(0, size.X, 0, size.Y),
 		Position = Utility.getcenter(size.X, size.Y),
 		Filled = false,
@@ -3212,7 +3214,7 @@ function Library:New(cfg)
 		Visible = false,
 	})
 
-	local window_title = Library:create("Text", {
+	local window_title = Library:Create("Text", {
 		Text = name_white,
 		Parent = window_outline,
 		Visible = true,
@@ -3225,7 +3227,7 @@ function Library:New(cfg)
 		Position = UDim2.new(0, 10, 0, 7),
 		ZIndex = 13,
 	})
-	local window_title_accent = Library:create("Text", {
+	local window_title_accent = Library:Create("Text", {
 		Text = name_color,
 		Parent = window_outline,
 		Visible = true,
@@ -3247,7 +3249,7 @@ function Library:New(cfg)
 		local name = cfg.name or cfg.Name or "Page"
 		local default = cfg.default or cfg.Default or false
 
-		local button_holder = Library:create("Square", {
+		local button_holder = Library:Create("Square", {
 			Parent = window_page_holder_inline,
 			Visible = true,
 			Transparency = 1,
@@ -3257,7 +3259,7 @@ function Library:New(cfg)
 		})
 
 		table.insert(self.pages_buttons, button_holder)
-		local button_inline = Library:create("Square", {
+		local button_inline = Library:Create("Square", {
 			Parent = button_holder,
 			Visible = true,
 			Transparency = 1,
@@ -3268,7 +3270,7 @@ function Library:New(cfg)
 			Size = UDim2.new(1, -2, 1, -2),
 			Position = UDim2.new(0, 1, 0, 1),
 		})
-		local button_inline_gradient = Library:create("Square", {
+		local button_inline_gradient = Library:Create("Square", {
 			Parent = button_inline,
 			Visible = true,
 			Transparency = 1,
@@ -3279,7 +3281,7 @@ function Library:New(cfg)
 			Size = UDim2.new(1, -2, 1, -2),
 			Position = UDim2.new(0, 1, 0, 1),
 		})
-		Library:create("Image", {
+		Library:Create("Image", {
 			Data = Images.gradient,
 			Transparency = 1,
 			Visible = true,
@@ -3288,7 +3290,7 @@ function Library:New(cfg)
 			ZIndex = 13,
 		})
 
-		local button_title = Library:create("Text", {
+		local button_title = Library:Create("Text", {
 			Text = name,
 			Parent = button_holder,
 			Visible = true,
@@ -3303,7 +3305,7 @@ function Library:New(cfg)
 		})
 		table.insert(self.pages_titles, button_title)
 
-		local page_holder = Library:create("Square", {
+		local page_holder = Library:Create("Square", {
 			Parent = window_holder,
 			Visible = false,
 			Transparency = 0,
@@ -3317,7 +3319,7 @@ function Library:New(cfg)
 			table.insert(self.pages, page_holder)
 		end
 
-		local left = Library:create("Square", {
+		local left = Library:Create("Square", {
 			Transparency = 0,
 			Filled = false,
 			Thickness = 1,
@@ -3326,7 +3328,7 @@ function Library:New(cfg)
 			Size = UDim2.new(0.5, -14, 1, -10),
 		})
 		left:AddListLayout(15)
-		local right = Library:create("Square", {
+		local right = Library:Create("Square", {
 			Transparency = 0,
 			Filled = false,
 			Thickness = 1,
@@ -3344,14 +3346,14 @@ function Library:New(cfg)
 		end
 
 		if default then
-			Library:change_object_theme(button_title, "Accent")
+			Library:ChangeObjectTheme(button_title, "Accent")
 			page_holder.Visible = true
 		end
 
-		Library:connect(button_holder.MouseButton1Click, function()
+		Library:Connect(button_holder.MouseButton1Click, function()
 			for _, v in next, self.pages_titles do
 				if v ~= button_tbl then
-					Library:change_object_theme(v, "Text")
+					Library:ChangeObjectTheme(v, "Text")
 				end
 			end
 
@@ -3360,7 +3362,7 @@ function Library:New(cfg)
 					v.Visible = false
 				end
 			end
-			Library:change_object_theme(button_title, "Accent")
+			Library:ChangeObjectTheme(button_title, "Accent")
 			page_holder.Visible = true
 		end)
 
@@ -3375,7 +3377,7 @@ function Library:New(cfg)
 			local flag = cfg.flag or cfg.Flag or Utility.nextflag()
 			local players = Players
 
-			local list_holder = Library:create("Square", {
+			local list_holder = Library:Create("Square", {
 				Parent = page_holder,
 				Visible = true,
 				Transparency = 1,
@@ -3387,11 +3389,11 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 			do
-				local outline = Library:outline(list_holder, Color3.fromRGB(37, 37, 37), 14)
-				Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+				local outline = Library:Outline(list_holder, Color3.fromRGB(37, 37, 37), 14)
+				Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 			end
 
-			Library:create("Square", {
+			Library:Create("Square", {
 				Parent = list_holder,
 				Visible = true,
 				Transparency = 1,
@@ -3403,7 +3405,7 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 
-			local list_title = Library:create("Text", {
+			local list_title = Library:Create("Text", {
 				Text = "player list - 0 player(s)",
 				Parent = list_holder,
 				Visible = true,
@@ -3417,7 +3419,7 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 
-			local list_inline = Library:create("Square", {
+			local list_inline = Library:Create("Square", {
 				Parent = list_holder,
 				Visible = true,
 				Transparency = 1,
@@ -3429,11 +3431,11 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 			do
-				local outline = Library:outline(list_inline, Color3.fromRGB(37, 37, 37), 14)
-				Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+				local outline = Library:Outline(list_inline, Color3.fromRGB(37, 37, 37), 14)
+				Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 			end
 
-			local list_icon = Library:create("Square", {
+			local list_icon = Library:Create("Square", {
 				Parent = list_holder,
 				Visible = true,
 				Transparency = 1,
@@ -3445,11 +3447,11 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 			do
-				local outline = Library:outline(list_icon, Color3.fromRGB(37, 37, 37), 14)
-				Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+				local outline = Library:Outline(list_icon, Color3.fromRGB(37, 37, 37), 14)
+				Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 			end
 
-			local player_data = Library:create("Text", {
+			local player_data = Library:Create("Text", {
 				Text = "no player selected.",
 				Parent = list_holder,
 				Visible = true,
@@ -3463,7 +3465,7 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 
-			local player_image = Library:create("Image", {
+			local player_image = Library:Create("Image", {
 				Size = UDim2.new(1, 0, 1, 0),
 				Visible = true,
 				ZIndex = 18,
@@ -3471,14 +3473,14 @@ function Library:New(cfg)
 				Data = nil,
 			})
 
-			local list_content = Library:create("Square", {
+			local list_content = Library:Create("Square", {
 				Transparency = 0,
 				Size = UDim2.new(1, -4, 1, -4),
 				Position = UDim2.new(0, 2, 0, 3),
 				Parent = list_inline,
 			})
 
-			local PriorityFrame = Library:create("Square", {
+			local PriorityFrame = Library:Create("Square", {
 				Filled = true,
 				Visible = true,
 				Thickness = 0,
@@ -3497,10 +3499,10 @@ function Library:New(cfg)
 				PriorityFrame.Color = Color3.fromRGB(25, 25, 25)
 			end)
 
-			local outline1 = Library:outline(PriorityFrame, Color3.fromRGB(44, 44, 44), 14)
-			Library:outline(outline1, Color3.new(0, 0, 0), 14)
+			local outline1 = Library:Outline(PriorityFrame, Color3.fromRGB(44, 44, 44), 14)
+			Library:Outline(outline1, Color3.new(0, 0, 0), 14)
 
-			local icon = Library:create("Text", {
+			local icon = Library:Create("Text", {
 				Text = "priority",
 				Transparency = 1,
 				Visible = true,
@@ -3514,7 +3516,7 @@ function Library:New(cfg)
 				Outline = true,
 			})
 
-			local FriendFrame = Library:create("Square", {
+			local FriendFrame = Library:Create("Square", {
 				Filled = true,
 				Visible = true,
 				Thickness = 0,
@@ -3533,10 +3535,10 @@ function Library:New(cfg)
 				FriendFrame.Color = Color3.fromRGB(25, 25, 25)
 			end)
 
-			local outline2 = Library:outline(FriendFrame, Color3.fromRGB(44, 44, 44), 14)
-			Library:outline(outline2, Color3.new(0, 0, 0), 14)
+			local outline2 = Library:Outline(FriendFrame, Color3.fromRGB(44, 44, 44), 14)
+			Library:Outline(outline2, Color3.new(0, 0, 0), 14)
 
-			local friendicon = Library:create("Text", {
+			local friendicon = Library:Create("Text", {
 				Text = "friendly",
 				Transparency = 1,
 				Visible = true,
@@ -3554,7 +3556,7 @@ function Library:New(cfg)
 			list_content:MakeScrollable()
 			local scroll_connect = nil
 
-			local scrollbar_outline = Library:create("Square", {
+			local scrollbar_outline = Library:Create("Square", {
 				Transparency = 1,
 				Size = UDim2.new(0, 6, 1, 0),
 				Position = UDim2.new(1, -6, 0, 0),
@@ -3565,7 +3567,7 @@ function Library:New(cfg)
 				Filled = true,
 			})
 
-			local scrollbar = Library:create("Square", {
+			local scrollbar = Library:Create("Square", {
 				Transparency = 1,
 				Size = UDim2.new(0, 5, count == 0 and 1 or count / max, 0),
 				Position = UDim2.new(1, -3, 0, 0),
@@ -3587,7 +3589,7 @@ function Library:New(cfg)
 			end
 
 			list_content.MouseEnter:Connect(function()
-				scroll_connect = Library:connect(InputService.InputChanged, function(input)
+				scroll_connect = Library:Connect(InputService.InputChanged, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseWheel then
 						local down = input.Position.Z < 0 and true or false
 						if down then
@@ -3609,7 +3611,7 @@ function Library:New(cfg)
 
 			list_content.MouseLeave:Connect(function()
 				if scroll_connect then
-					Library:disconnect(scroll_connect)
+					Library:Disconnect(scroll_connect)
 				end
 			end)
 			refreshscroll()
@@ -3654,7 +3656,7 @@ function Library:New(cfg)
 					end
 					optioninstances[option] = {}
 
-					local button = Library:create("Square", {
+					local button = Library:Create("Square", {
 						Filled = true,
 						Transparency = 0,
 						Thickness = 1,
@@ -3666,7 +3668,7 @@ function Library:New(cfg)
 
 					optioninstances[option].button = button
 
-					local title = Library:create("Text", {
+					local title = Library:Create("Text", {
 						Text = option.Name,
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -3677,7 +3679,7 @@ function Library:New(cfg)
 						Parent = button,
 					})
 
-					local team = Library:create("Text", {
+					local team = Library:Create("Text", {
 						Text = option.Team and tostring(option.Team) or "none",
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -3688,7 +3690,7 @@ function Library:New(cfg)
 						Parent = button,
 					})
 
-					local buyer = Library:create("Text", {
+					local buyer = Library:Create("Text", {
 						Text = isbuyer and "buyer" or "false",
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -3699,7 +3701,7 @@ function Library:New(cfg)
 						Parent = button,
 					})
 
-					local status = Library:create("Text", {
+					local status = Library:Create("Text", {
 						Text = option == game.Players.LocalPlayer and "local player" or "none",
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -3722,7 +3724,7 @@ function Library:New(cfg)
 
 					optioninstances[option].text = title
 					optioninstances[option].status = status
-					local firstline = Library:create("Square", {
+					local firstline = Library:Create("Square", {
 						Transparency = 0.3,
 						Size = UDim2.new(0, 2, 1, 0),
 						Position = UDim2.new(1 / 4, 1, 0, 0),
@@ -3732,7 +3734,7 @@ function Library:New(cfg)
 						Color = Color3.fromRGB(0, 0, 0),
 						Filled = true,
 					})
-					local secondline = Library:create("Square", {
+					local secondline = Library:Create("Square", {
 						Transparency = 0.3,
 						Size = UDim2.new(0, 2, 1, 0),
 						Position = UDim2.new(2 / 4, 1, 0, 0),
@@ -3742,7 +3744,7 @@ function Library:New(cfg)
 						Color = Color3.fromRGB(0, 0, 0),
 						Filled = true,
 					})
-					local thirdline = Library:create("Square", {
+					local thirdline = Library:Create("Square", {
 						Transparency = 0.3,
 						Size = UDim2.new(0, 2, 1, 0),
 						Position = UDim2.new(3 / 4, 1, 0, 0),
@@ -3752,7 +3754,7 @@ function Library:New(cfg)
 						Color = Color3.fromRGB(0, 0, 0),
 						Filled = true,
 					})
-					local bottomline = Library:create("Square", {
+					local bottomline = Library:Create("Square", {
 						Transparency = 0.3,
 						Size = UDim2.new(1, -8, 0, 2),
 						Position = UDim2.new(0, 3, 1, 0),
@@ -3873,7 +3875,7 @@ function Library:New(cfg)
 				)
 			).data
 
-			local list_holder = Library:create("Square", {
+			local list_holder = Library:Create("Square", {
 				Parent = page_holder,
 				Visible = true,
 				Transparency = 1,
@@ -3885,11 +3887,11 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 			do
-				local outline = Library:outline(list_holder, Color3.fromRGB(37, 37, 37), 14)
-				Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+				local outline = Library:Outline(list_holder, Color3.fromRGB(37, 37, 37), 14)
+				Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 			end
 
-			Library:create("Square", {
+			Library:Create("Square", {
 				Parent = list_holder,
 				Visible = true,
 				Transparency = 1,
@@ -3901,7 +3903,7 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 
-			local list_title = Library:create("Text", {
+			local list_title = Library:Create("Text", {
 				Text = "server list - 0 servers",
 				Parent = list_holder,
 				Visible = true,
@@ -3915,7 +3917,7 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 
-			local list_inline = Library:create("Square", {
+			local list_inline = Library:Create("Square", {
 				Parent = list_holder,
 				Visible = true,
 				Transparency = 1,
@@ -3927,18 +3929,18 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 			do
-				local outline = Library:outline(list_inline, Color3.fromRGB(37, 37, 37), 14)
-				Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+				local outline = Library:Outline(list_inline, Color3.fromRGB(37, 37, 37), 14)
+				Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 			end
 
-			local list_content = Library:create("Square", {
+			local list_content = Library:Create("Square", {
 				Transparency = 0,
 				Size = UDim2.new(1, -4, 1, -4),
 				Position = UDim2.new(0, 2, 0, 3),
 				Parent = list_inline,
 			})
 
-			local join_frame = Library:create("Square", {
+			local join_frame = Library:Create("Square", {
 				Filled = true,
 				Visible = true,
 				Thickness = 0,
@@ -3954,9 +3956,9 @@ function Library:New(cfg)
 			join_frame.MouseLeave:Connect(function()
 				join_frame.Color = Color3.fromRGB(25, 25, 25)
 			end)
-			local outline1 = Library:outline(join_frame, Color3.fromRGB(44, 44, 44), 14)
-			Library:outline(outline1, Color3.new(0, 0, 0), 14)
-			local jointext = Library:create("Text", {
+			local outline1 = Library:Outline(join_frame, Color3.fromRGB(44, 44, 44), 14)
+			Library:Outline(outline1, Color3.new(0, 0, 0), 14)
+			local jointext = Library:Create("Text", {
 				Text = "connect",
 				Transparency = 1,
 				Visible = true,
@@ -3970,7 +3972,7 @@ function Library:New(cfg)
 				Outline = true,
 			})
 
-			local sort_frame = Library:create("Square", {
+			local sort_frame = Library:Create("Square", {
 				Filled = true,
 				Visible = true,
 				Thickness = 0,
@@ -3986,9 +3988,9 @@ function Library:New(cfg)
 			sort_frame.MouseLeave:Connect(function()
 				sort_frame.Color = Color3.fromRGB(25, 25, 25)
 			end)
-			local outline2 = Library:outline(sort_frame, Color3.fromRGB(44, 44, 44), 14)
-			Library:outline(outline2, Color3.new(0, 0, 0), 14)
-			local text = Library:create("Text", {
+			local outline2 = Library:Outline(sort_frame, Color3.fromRGB(44, 44, 44), 14)
+			Library:Outline(outline2, Color3.new(0, 0, 0), 14)
+			local text = Library:Create("Text", {
 				Text = "swap filter",
 				Transparency = 1,
 				Visible = true,
@@ -4002,7 +4004,7 @@ function Library:New(cfg)
 				Outline = true,
 			})
 
-			local sort_text = Library:create("Text", {
+			local sort_text = Library:Create("Text", {
 				Text = "players ascending",
 				Transparency = 0.6,
 				Visible = true,
@@ -4016,7 +4018,7 @@ function Library:New(cfg)
 				Outline = true,
 			})
 
-			local refresh_frame = Library:create("Square", {
+			local refresh_frame = Library:Create("Square", {
 				Filled = true,
 				Visible = true,
 				Thickness = 0,
@@ -4032,9 +4034,9 @@ function Library:New(cfg)
 			refresh_frame.MouseLeave:Connect(function()
 				refresh_frame.Color = Color3.fromRGB(25, 25, 25)
 			end)
-			local outline1 = Library:outline(refresh_frame, Color3.fromRGB(44, 44, 44), 14)
-			Library:outline(outline1, Color3.new(0, 0, 0), 14)
-			local refreshtext = Library:create("Text", {
+			local outline1 = Library:Outline(refresh_frame, Color3.fromRGB(44, 44, 44), 14)
+			Library:Outline(outline1, Color3.new(0, 0, 0), 14)
+			local refreshtext = Library:Create("Text", {
 				Text = "refresh",
 				Transparency = 1,
 				Visible = true,
@@ -4053,7 +4055,7 @@ function Library:New(cfg)
 			list_content:MakeScrollable()
 			local scroll_connect = nil
 
-			local scrollbar_outline = Library:create("Square", {
+			local scrollbar_outline = Library:Create("Square", {
 				Transparency = 1,
 				Size = UDim2.new(0, 6, 1, 0),
 				Position = UDim2.new(1, -6, 0, 0),
@@ -4064,7 +4066,7 @@ function Library:New(cfg)
 				Filled = true,
 			})
 
-			local scrollbar = Library:create("Square", {
+			local scrollbar = Library:Create("Square", {
 				Transparency = 1,
 				Size = UDim2.new(0, 5, count == 0 and 1 or count / max, 0),
 				Position = UDim2.new(1, -3, 0, 0),
@@ -4086,7 +4088,7 @@ function Library:New(cfg)
 			end
 
 			list_content.MouseEnter:Connect(function()
-				scroll_connect = Library:connect(InputService.InputChanged, function(input)
+				scroll_connect = Library:Connect(InputService.InputChanged, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseWheel then
 						local down = input.Position.Z < 0 and true or false
 						if down then
@@ -4108,7 +4110,7 @@ function Library:New(cfg)
 
 			list_content.MouseLeave:Connect(function()
 				if scroll_connect then
-					Library:disconnect(scroll_connect)
+					Library:Disconnect(scroll_connect)
 				end
 			end)
 			refreshscroll()
@@ -4123,13 +4125,13 @@ function Library:New(cfg)
 
 					for i, v in next, optioninstances do
 						if i == option then
-							Library:change_object_theme(v.text, "Accent")
-							Library:change_object_theme(v.ping, "Accent")
-							Library:change_object_theme(v.players, "Accent")
+							Library:ChangeObjectTheme(v.text, "Accent")
+							Library:ChangeObjectTheme(v.ping, "Accent")
+							Library:ChangeObjectTheme(v.players, "Accent")
 						else
-							Library:change_object_theme(v.text, "Text")
-							Library:change_object_theme(v.ping, "Text")
-							Library:change_object_theme(v.players, "Text")
+							Library:ChangeObjectTheme(v.text, "Text")
+							Library:ChangeObjectTheme(v.ping, "Text")
+							Library:ChangeObjectTheme(v.players, "Text")
 						end
 					end
 				end)
@@ -4139,7 +4141,7 @@ function Library:New(cfg)
 				for i, option in next, tbl do
 					optioninstances[option] = {}
 
-					local button = Library:create("Square", {
+					local button = Library:Create("Square", {
 						Filled = true,
 						Transparency = 0,
 						Thickness = 1,
@@ -4151,7 +4153,7 @@ function Library:New(cfg)
 
 					optioninstances[option].button = button
 
-					local id = Library:create("Text", {
+					local id = Library:Create("Text", {
 						Text = option.id and string.sub(option.id, 0, 8) .. "-XXXX-XXXX-XXXX-XXXXXXXXXXXX" or "nil",
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -4162,7 +4164,7 @@ function Library:New(cfg)
 						Parent = button,
 					})
 
-					local ping = Library:create("Text", {
+					local ping = Library:Create("Text", {
 						Text = option.ping and tostring(option.ping .. " ms") or "0 ms",
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -4173,7 +4175,7 @@ function Library:New(cfg)
 						Parent = button,
 					})
 
-					local players = Library:create("Text", {
+					local players = Library:Create("Text", {
 						Text = option.playing and option.maxPlayers and tostring(
 							option.playing .. "/" .. option.maxPlayers
 						) or "0/0",
@@ -4191,7 +4193,7 @@ function Library:New(cfg)
 					optioninstances[option].ping = ping
 					optioninstances[option].players = players
 
-					local firstline = Library:create("Square", {
+					local firstline = Library:Create("Square", {
 						Transparency = 0.3,
 						Size = UDim2.new(0, 2, 1, 0),
 						Position = UDim2.new(2 / 4, 1, 0, 0),
@@ -4201,7 +4203,7 @@ function Library:New(cfg)
 						Color = Color3.fromRGB(0, 0, 0),
 						Filled = true,
 					})
-					local secondline = Library:create("Square", {
+					local secondline = Library:Create("Square", {
 						Transparency = 0.3,
 						Size = UDim2.new(0, 2, 1, 0),
 						Position = UDim2.new(3 / 4, 1, 0, 0),
@@ -4211,7 +4213,7 @@ function Library:New(cfg)
 						Color = Color3.fromRGB(0, 0, 0),
 						Filled = true,
 					})
-					local bottomline = Library:create("Square", {
+					local bottomline = Library:Create("Square", {
 						Transparency = 0.3,
 						Size = UDim2.new(1, -8, 0, 2),
 						Position = UDim2.new(0, 3, 1, 0),
@@ -4257,7 +4259,7 @@ function Library:New(cfg)
 					if clicked_join then
 						clicked_join = false
 						counting_join = false
-						Library:change_object_theme(jointext, "Text")
+						Library:ChangeObjectTheme(jointext, "Text")
 						jointext.Text = "connect"
 
 						TeleportService:TeleportToPlaceInstance(game.PlaceId, Library.Flags[flag])
@@ -4269,12 +4271,12 @@ function Library:New(cfg)
 								break
 							end
 							jointext.Text = "confirm? " .. tostring(i)
-							Library:change_object_theme(jointext, "Accent")
+							Library:ChangeObjectTheme(jointext, "Accent")
 							wait(1)
 						end
 						clicked_join = false
 						counting_join = false
-						Library:change_object_theme(jointext, "Text")
+						Library:ChangeObjectTheme(jointext, "Text")
 						jointext.Text = "connect"
 					end
 				end)
@@ -4356,7 +4358,7 @@ function Library:New(cfg)
 				or left
 			local size = cfg.size or cfg.Size or 200
 
-			local section_holder = Library:create("Square", {
+			local section_holder = Library:Create("Square", {
 				Parent = side,
 				Visible = true,
 				Transparency = 1,
@@ -4368,11 +4370,11 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 			do
-				local outline = Library:outline(section_holder, Color3.fromRGB(37, 37, 37), 14)
-				Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+				local outline = Library:Outline(section_holder, Color3.fromRGB(37, 37, 37), 14)
+				Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 			end
 
-			local section_title_cover = Library:create("Square", {
+			local section_title_cover = Library:Create("Square", {
 				Parent = section_holder,
 				Visible = true,
 				Transparency = 1,
@@ -4383,7 +4385,7 @@ function Library:New(cfg)
 				Filled = true,
 				ZIndex = 14,
 			})
-			local section_title = Library:create("Text", {
+			local section_title = Library:Create("Text", {
 				Text = name,
 				Parent = section_holder,
 				Visible = true,
@@ -4397,7 +4399,7 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 
-			local section_content = Library:create("Square", {
+			local section_content = Library:Create("Square", {
 				Transparency = 0,
 				Size = UDim2.new(1, -32, 1, -10),
 				Position = UDim2.new(0, 16, 0, 15),
@@ -4416,7 +4418,7 @@ function Library:New(cfg)
 				local callback = cfg.callback or cfg.Callback or function() end
 				local toggled = false
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Parent = section_content,
 					Visible = true,
 					Transparency = 0,
@@ -4426,7 +4428,7 @@ function Library:New(cfg)
 					ZIndex = 14,
 				})
 
-				local toggle_frame = Library:create("Square", {
+				local toggle_frame = Library:Create("Square", {
 					Parent = holder,
 					Visible = true,
 					Transparency = 1,
@@ -4437,9 +4439,9 @@ function Library:New(cfg)
 					ZIndex = 14,
 				})
 				do
-					local outline = Library:outline(toggle_frame, Color3.fromRGB(0, 0, 0), 14)
+					local outline = Library:Outline(toggle_frame, Color3.fromRGB(0, 0, 0), 14)
 				end
-				local gradient = Library:create("Image", {
+				local gradient = Library:Create("Image", {
 					Data = Images.gradient,
 					Transparency = 1,
 					Visible = true,
@@ -4448,7 +4450,7 @@ function Library:New(cfg)
 					ZIndex = 14,
 				})
 
-				local toggle_title = Library:create("Text", {
+				local toggle_title = Library:Create("Text", {
 					Text = name,
 					Parent = holder,
 					Visible = true,
@@ -4465,9 +4467,9 @@ function Library:New(cfg)
 				local function setstate()
 					toggled = not toggled
 					if toggled then
-						Library:change_object_theme(toggle_frame, "Accent")
+						Library:ChangeObjectTheme(toggle_frame, "Accent")
 					else
-						Library:change_object_theme(toggle_frame, "Toggle Background")
+						Library:ChangeObjectTheme(toggle_frame, "Toggle Background")
 					end
 					Library.Flags[flag] = toggled
 					callback(toggled)
@@ -4477,13 +4479,13 @@ function Library:New(cfg)
 
 				holder.MouseEnter:Connect(function()
 					if not toggled then
-						Library:change_object_theme(toggle_frame, "Toggle Background Highlight")
+						Library:ChangeObjectTheme(toggle_frame, "Toggle Background Highlight")
 					end
 				end)
 
 				holder.MouseLeave:Connect(function()
 					if not toggled then
-						Library:change_object_theme(toggle_frame, "Toggle Background")
+						Library:ChangeObjectTheme(toggle_frame, "Toggle Background")
 					end
 				end)
 
@@ -4527,7 +4529,7 @@ function Library:New(cfg)
 					local callback = cfg.callback or function() end
 					local key_mode = mode
 
-					local keyholder = Library:create("Square", {
+					local keyholder = Library:Create("Square", {
 						Size = UDim2.new(0, 40, 1, 0),
 						Position = UDim2.new(1, -60, 0, 0),
 						Transparency = 0,
@@ -4537,7 +4539,7 @@ function Library:New(cfg)
 						Filled = false,
 					})
 
-					local keytext = Library:create("Text", {
+					local keytext = Library:Create("Text", {
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
 						Theme = "Un-Selected_Text",
@@ -4572,14 +4574,14 @@ function Library:New(cfg)
 							local text = (Keys[newkey] or tostring(newkey):gsub("Enum.KeyCode.", ""))
 
 							keytext.Text = "[" .. text .. "]"
-							Library:change_object_theme(keytext, "Un-Selected_Text")
+							Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 						else
 							key = nil
 
 							local text = "-"
 
 							keytext.Text = "[" .. text .. "]"
-							Library:change_object_theme(keytext, "Un-Selected_Text")
+							Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 						end
 
 						if bind ~= "" or bind ~= nil then
@@ -4605,7 +4607,7 @@ function Library:New(cfg)
 							local text = (Keys[newkey] or tostring(newkey):gsub("Enum.KeyCode.", ""))
 
 							keytext.Text = "[" .. text .. "]"
-							Library:change_object_theme(keytext, "Un-Selected_Text")
+							Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 						else
 							key = nil
 							Library.Flags[flag .. "_KEY"] = nil
@@ -4613,17 +4615,17 @@ function Library:New(cfg)
 							local text = "-"
 
 							keytext.Text = "[" .. text .. "]"
-							Library:change_object_theme(keytext, "Un-Selected_Text")
+							Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 						end
 					end
 
-					Library:connect(InputService.InputBegan, function(inp)
+					Library:Connect(InputService.InputBegan, function(inp)
 						if (inp.KeyCode == key or inp.UserInputType == key) and not binding then
 							if key_mode == "Hold" then
 								if flag then
 									Library.Flags[flag] = true
 								end
-								c = Library:connect(RunService.RenderStepped, function()
+								c = Library:Connect(RunService.RenderStepped, function()
 									if callback then
 										callback(true)
 									end
@@ -4647,9 +4649,9 @@ function Library:New(cfg)
 					keyholder.MouseButton1Click:Connect(function()
 						if not binding then
 							keytext.Text = "[-]"
-							Library:change_object_theme(keytext, "Accent")
+							Library:ChangeObjectTheme(keytext, "Accent")
 
-							binding = Library:connect(InputService.InputBegan, function(input, gpe)
+							binding = Library:Connect(InputService.InputBegan, function(input, gpe)
 								set(
 									input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 										or input.UserInputType
@@ -4658,14 +4660,14 @@ function Library:New(cfg)
 									input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 										or input.UserInputType
 								)
-								Library:disconnect(binding)
+								Library:Disconnect(binding)
 								task.wait()
 								binding = nil
 							end)
 						end
 					end)
 
-					Library:connect(InputService.InputEnded, function(inp)
+					Library:Connect(InputService.InputEnded, function(inp)
 						if key_mode == "Hold" then
 							if key ~= "" or key ~= nil then
 								if inp.KeyCode == key or inp.UserInputType == key then
@@ -4703,7 +4705,7 @@ function Library:New(cfg)
 				local divider = { section = self }
 				local name = cfg.name or cfg.Name or "new divider"
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Parent = section_content,
 					Visible = true,
 					Transparency = 0,
@@ -4713,7 +4715,7 @@ function Library:New(cfg)
 					ZIndex = 14,
 				})
 
-				local div = Library:create("Square", {
+				local div = Library:Create("Square", {
 					Parent = holder,
 					Visible = true,
 					Transparency = 1,
@@ -4724,7 +4726,7 @@ function Library:New(cfg)
 					Filled = true,
 					ZIndex = 14,
 				})
-				local title = Library:create("Text", {
+				local title = Library:Create("Text", {
 					Text = name,
 					Parent = holder,
 					Visible = true,
@@ -4737,7 +4739,7 @@ function Library:New(cfg)
 					Position = UDim2.new(0, 20, 0, -5),
 					ZIndex = 14,
 				})
-				local div = Library:create("Square", {
+				local div = Library:Create("Square", {
 					Parent = holder,
 					Visible = true,
 					Transparency = 1,
@@ -4771,7 +4773,7 @@ function Library:New(cfg)
 				local flag = cfg.flag or Utility.nextflag()
 				local callback = cfg.callback or function() end
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Parent = section_content,
 					Visible = true,
 					Transparency = 0,
@@ -4781,7 +4783,7 @@ function Library:New(cfg)
 					ZIndex = 14,
 				})
 
-				local slider_frame = Library:create("Square", {
+				local slider_frame = Library:Create("Square", {
 					Parent = holder,
 					Visible = true,
 					Transparency = 1,
@@ -4793,9 +4795,9 @@ function Library:New(cfg)
 					Position = name and UDim2.new(0, 23, 0, 14) or UDim2.new(0, 23, 0, 3),
 				})
 				do
-					local outline = Library:outline(slider_frame, Color3.fromRGB(0, 0, 0), 14)
+					local outline = Library:Outline(slider_frame, Color3.fromRGB(0, 0, 0), 14)
 				end
-				Library:create("Image", {
+				Library:Create("Image", {
 					Data = Images.gradient,
 					Transparency = 1,
 					Visible = true,
@@ -4805,7 +4807,7 @@ function Library:New(cfg)
 				})
 
 				if name then
-					local slider_title = Library:create("Text", {
+					local slider_title = Library:Create("Text", {
 						Text = name,
 						Parent = holder,
 						Visible = true,
@@ -4820,7 +4822,7 @@ function Library:New(cfg)
 					})
 				end
 
-				local slider_fill = Library:create("Square", {
+				local slider_fill = Library:Create("Square", {
 					Parent = slider_frame,
 					Visible = true,
 					Transparency = 1,
@@ -4832,7 +4834,7 @@ function Library:New(cfg)
 					Position = UDim2.new(0, 0, 0, 0),
 				})
 
-				local slider_value = Library:create("Text", {
+				local slider_value = Library:Create("Text", {
 					Text = text,
 					Parent = slider_fill,
 					Visible = true,
@@ -4846,7 +4848,7 @@ function Library:New(cfg)
 					ZIndex = 15,
 				})
 
-				local slider_drag = Library:create("Square", {
+				local slider_drag = Library:Create("Square", {
 					Parent = slider_frame,
 					Visible = true,
 					Transparency = 0,
@@ -4881,40 +4883,40 @@ function Library:New(cfg)
 				end
 
 				holder.MouseEnter:Connect(function()
-					Library:change_object_theme(slider_frame, "Toggle Background Highlight")
+					Library:ChangeObjectTheme(slider_frame, "Toggle Background Highlight")
 				end)
 
 				holder.MouseLeave:Connect(function()
-					Library:change_object_theme(slider_frame, "Toggle Background")
+					Library:ChangeObjectTheme(slider_frame, "Toggle Background")
 				end)
 
-				Library:connect(slider_drag.InputBegan, function(input)
+				Library:Connect(slider_drag.InputBegan, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						sliding = true
 						slide(input)
 					end
 				end)
 
-				Library:connect(slider_drag.InputEnded, function(input)
+				Library:Connect(slider_drag.InputEnded, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						sliding = false
 					end
 				end)
 
-				Library:connect(slider_fill.InputBegan, function(input)
+				Library:Connect(slider_fill.InputBegan, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						sliding = true
 						slide(input)
 					end
 				end)
 
-				Library:connect(slider_fill.InputEnded, function(input)
+				Library:Connect(slider_fill.InputEnded, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseButton1 then
 						sliding = false
 					end
 				end)
 
-				Library:connect(InputService.InputChanged, function(input)
+				Library:Connect(InputService.InputChanged, function(input)
 					if input.UserInputType == Enum.UserInputType.MouseMovement then
 						if sliding then
 							slide(input)
@@ -4923,7 +4925,7 @@ function Library:New(cfg)
 				end)
 
 				if allow then
-					local slider_question = Library:create("Text", {
+					local slider_question = Library:Create("Text", {
 						Text = "?",
 						Parent = holder,
 						Visible = true,
@@ -4936,7 +4938,7 @@ function Library:New(cfg)
 						Position = UDim2.new(1, -36, 0, -2),
 						ZIndex = 14,
 					})
-					local question_button = Library:create("Square", {
+					local question_button = Library:Create("Square", {
 						Filled = true,
 						Thickness = 0,
 						Parent = holder,
@@ -4948,7 +4950,7 @@ function Library:New(cfg)
 						ZIndex = 29,
 					})
 
-					local slider_window = Library:create("Square", {
+					local slider_window = Library:Create("Square", {
 						Filled = true,
 						Thickness = 0,
 						Parent = slider_drag,
@@ -4960,10 +4962,10 @@ function Library:New(cfg)
 					})
 					table.insert(FadeThings, slider_window)
 
-					local outline3 = Library:outline(slider_window, Color3.fromRGB(44, 44, 44))
-					Library:outline(outline3, Color3.fromRGB(0, 0, 0))
+					local outline3 = Library:Outline(slider_window, Color3.fromRGB(44, 44, 44))
+					Library:Outline(outline3, Color3.fromRGB(0, 0, 0))
 
-					local windowback = Library:create("Square", {
+					local windowback = Library:Create("Square", {
 						Filled = true,
 						Thickness = 0,
 						Parent = slider_window,
@@ -4974,7 +4976,7 @@ function Library:New(cfg)
 						ZIndex = 29,
 					})
 
-					local window_page = Library:create("Square", {
+					local window_page = Library:Create("Square", {
 						Filled = false,
 						Thickness = 0,
 						Transparency = 0,
@@ -4987,7 +4989,7 @@ function Library:New(cfg)
 					})
 					window_page:AddListLayout(3)
 
-					local slider_button = Library:create("Square", {
+					local slider_button = Library:Create("Square", {
 						Filled = true,
 						Thickness = 0,
 						Parent = slider_window,
@@ -5000,7 +5002,7 @@ function Library:New(cfg)
 
 					local isfading = false
 
-					local fadetext = Library:create("Text", {
+					local fadetext = Library:Create("Text", {
 						Text = "fading",
 						Parent = slider_button,
 						Visible = true,
@@ -5014,8 +5016,8 @@ function Library:New(cfg)
 						ZIndex = 29,
 					})
 
-					local outline3 = Library:outline(slider_window, Color3.fromRGB(44, 44, 44))
-					Library:outline(outline3, Color3.fromRGB(0, 0, 0))
+					local outline3 = Library:Outline(slider_window, Color3.fromRGB(44, 44, 44))
+					Library:Outline(outline3, Color3.fromRGB(0, 0, 0))
 
 					local startslide = Library.CreateSlider({
 						parent = window_page,
@@ -5066,15 +5068,15 @@ function Library:New(cfg)
 						slider_window.Visible = not slider_window.Visible
 					end)
 					question_button.MouseEnter:Connect(function()
-						Library:change_object_theme(slider_question, "Accent")
+						Library:ChangeObjectTheme(slider_question, "Accent")
 					end)
 					question_button.MouseLeave:Connect(function()
-						Library:change_object_theme(slider_question, "Text")
+						Library:ChangeObjectTheme(slider_question, "Text")
 					end)
 					slider_button.MouseButton1Click:Connect(function()
 						isfading = not isfading
 						setfade(isfading)
-						Library:change_object_theme(fadetext, isfading and "Accent" or "Text")
+						Library:ChangeObjectTheme(fadetext, isfading and "Accent" or "Text")
 					end)
 					task.spawn(function()
 						while task.wait() do
@@ -5117,7 +5119,7 @@ function Library:New(cfg)
 				local screen = { section = self }
 				local name = cfg.name or cfg.Name or "no content"
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Parent = section_content,
 					Visible = true,
 					Transparency = 0,
@@ -5127,7 +5129,7 @@ function Library:New(cfg)
 					ZIndex = 14,
 				})
 
-				local title = Library:create("Text", {
+				local title = Library:Create("Text", {
 					Text = name,
 					Font = Drawing.Fonts.Plex,
 					Size = 13,
@@ -5176,7 +5178,7 @@ function Library:New(cfg)
 					end
 				end
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Transparency = 0,
 					ZIndex = 14,
 					Size = UDim2.new(1, 0, 0, name and 32 or 19),
@@ -5185,7 +5187,7 @@ function Library:New(cfg)
 				})
 
 				if name then
-					local title = Library:create("Text", {
+					local title = Library:Create("Text", {
 						Text = name,
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -5239,7 +5241,7 @@ function Library:New(cfg)
 					end
 				end
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Transparency = 0,
 					ZIndex = 18,
 					Size = UDim2.new(1, 0, 0, name and 32 or 19),
@@ -5248,7 +5250,7 @@ function Library:New(cfg)
 				})
 
 				if name then
-					local title = Library:create("Text", {
+					local title = Library:Create("Text", {
 						Text = name,
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -5302,7 +5304,7 @@ function Library:New(cfg)
 					end
 				end
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Transparency = 0,
 					ZIndex = 14,
 					Size = UDim2.new(1, 0, 0, name and 32 or 19),
@@ -5311,7 +5313,7 @@ function Library:New(cfg)
 				})
 
 				if name then
-					local title = Library:create("Text", {
+					local title = Library:Create("Text", {
 						Text = name,
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -5336,14 +5338,14 @@ function Library:New(cfg)
 				local callback = cfg.callback or cfg.Callback or function() end
 				local button_confirm = cfg.confirm or cfg.Confirm or false
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Transparency = 0,
 					ZIndex = 14,
 					Size = UDim2.new(1, 0, 0, 22),
 					Parent = section_content,
 					Thickness = 1,
 				})
-				local ButtonFrame = Library:create("Square", {
+				local ButtonFrame = Library:Create("Square", {
 					Filled = true,
 					Visible = true,
 					Thickness = 0,
@@ -5362,10 +5364,10 @@ function Library:New(cfg)
 					ButtonFrame.Color = Color3.fromRGB(25, 25, 25)
 				end)
 
-				local outline1 = Library:outline(ButtonFrame, Color3.fromRGB(44, 44, 44), 14)
-				Library:outline(outline1, Color3.new(0, 0, 0), 14)
+				local outline1 = Library:Outline(ButtonFrame, Color3.fromRGB(44, 44, 44), 14)
+				Library:Outline(outline1, Color3.new(0, 0, 0), 14)
 
-				local icon = Library:create("Text", {
+				local icon = Library:Create("Text", {
 					Text = name,
 					Transparency = 1,
 					Visible = true,
@@ -5380,13 +5382,13 @@ function Library:New(cfg)
 				})
 
 				local clicked, counting = false, false
-				Library:connect(ButtonFrame.MouseButton1Click, function()
+				Library:Connect(ButtonFrame.MouseButton1Click, function()
 					task.spawn(function()
 						if button_confirm then
 							if clicked then
 								clicked = false
 								counting = false
-								Library:change_object_theme(icon, "Text")
+								Library:ChangeObjectTheme(icon, "Text")
 								icon.Text = name
 								callback()
 							else
@@ -5397,12 +5399,12 @@ function Library:New(cfg)
 										break
 									end
 									icon.Text = "confirm? " .. tostring(i)
-									Library:change_object_theme(icon, "Accent")
+									Library:ChangeObjectTheme(icon, "Accent")
 									wait(1)
 								end
 								clicked = false
 								counting = false
-								Library:change_object_theme(icon, "Text")
+								Library:ChangeObjectTheme(icon, "Text")
 								icon.Text = name
 							end
 						else
@@ -5410,11 +5412,11 @@ function Library:New(cfg)
 						end
 					end)
 				end)
-				Library:connect(ButtonFrame.MouseButton1Down, function()
-					Library:change_object_theme(icon, "Accent")
+				Library:Connect(ButtonFrame.MouseButton1Down, function()
+					Library:ChangeObjectTheme(icon, "Accent")
 				end)
-				Library:connect(ButtonFrame.MouseButton1Up, function()
-					Library:change_object_theme(icon, "Text")
+				Library:Connect(ButtonFrame.MouseButton1Up, function()
+					Library:ChangeObjectTheme(icon, "Text")
 				end)
 
 				function button_tbl:button(cfg)
@@ -5422,7 +5424,7 @@ function Library:New(cfg)
 					local callback = cfg.callback or cfg.Callback or function() end
 					ButtonFrame.Size = UDim2.new(1 / 2, -40, 0, 17)
 
-					local ButtonFrame_2 = Library:create("Square", {
+					local ButtonFrame_2 = Library:Create("Square", {
 						Filled = true,
 						Visible = true,
 						Thickness = 0,
@@ -5441,10 +5443,10 @@ function Library:New(cfg)
 						ButtonFrame_2.Color = Color3.fromRGB(25, 25, 25)
 					end)
 
-					local outline1 = Library:outline(ButtonFrame_2, Color3.fromRGB(44, 44, 44), 14)
-					Library:outline(outline1, Color3.new(0, 0, 0), 14)
+					local outline1 = Library:Outline(ButtonFrame_2, Color3.fromRGB(44, 44, 44), 14)
+					Library:Outline(outline1, Color3.new(0, 0, 0), 14)
 
-					local icon = Library:create("Text", {
+					local icon = Library:Create("Text", {
 						Text = name,
 						Transparency = 1,
 						Visible = true,
@@ -5459,13 +5461,13 @@ function Library:New(cfg)
 					})
 
 					local clicked, counting = false, false
-					Library:connect(ButtonFrame_2.MouseButton1Click, function()
+					Library:Connect(ButtonFrame_2.MouseButton1Click, function()
 						task.spawn(function()
 							if button_confirm then
 								if clicked then
 									clicked = false
 									counting = false
-									Library:change_object_theme(icon, "Text")
+									Library:ChangeObjectTheme(icon, "Text")
 									icon.Text = name
 									callback()
 								else
@@ -5476,12 +5478,12 @@ function Library:New(cfg)
 											break
 										end
 										icon.Text = "confirm? " .. tostring(i)
-										Library:change_object_theme(icon, "Accent")
+										Library:ChangeObjectTheme(icon, "Accent")
 										wait(1)
 									end
 									clicked = false
 									counting = false
-									Library:change_object_theme(icon, "Text")
+									Library:ChangeObjectTheme(icon, "Text")
 									icon.Text = name
 								end
 							else
@@ -5489,11 +5491,11 @@ function Library:New(cfg)
 							end
 						end)
 					end)
-					Library:connect(ButtonFrame_2.MouseButton1Down, function()
-						Library:change_object_theme(icon, "Accent")
+					Library:Connect(ButtonFrame_2.MouseButton1Down, function()
+						Library:ChangeObjectTheme(icon, "Accent")
 					end)
-					Library:connect(ButtonFrame_2.MouseButton1Up, function()
-						Library:change_object_theme(icon, "Text")
+					Library:Connect(ButtonFrame_2.MouseButton1Up, function()
+						Library:ChangeObjectTheme(icon, "Text")
 					end)
 				end
 
@@ -5513,7 +5515,7 @@ function Library:New(cfg)
 				local allow_tool = cfg.tooltip or cfg.ToolTip or false
 				local defaultalpha = cfg.alpha or cfg.Alpha or 1
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Transparency = 0,
 					Filled = true,
 					Thickness = 1,
@@ -5522,7 +5524,7 @@ function Library:New(cfg)
 					Parent = section_content,
 				})
 
-				local title = Library:create("Text", {
+				local title = Library:Create("Text", {
 					Text = name,
 					Font = Drawing.Fonts.Plex,
 					Size = 13,
@@ -5576,12 +5578,12 @@ function Library:New(cfg)
 				local callback = cfg.callback or function() end
 				local key_mode = mode
 
-				local holder = Library:create(
+				local holder = Library:Create(
 					"Square",
 					{ Transparency = 0, ZIndex = 15, Size = UDim2.new(1, 0, 0, 6), Parent = section_content }
 				)
 
-				local title = Library:create("Text", {
+				local title = Library:Create("Text", {
 					Text = name,
 					Font = Drawing.Fonts.Plex,
 					Size = 13,
@@ -5594,7 +5596,7 @@ function Library:New(cfg)
 
 				local keybindname = key_name or ""
 
-				local keytext = Library:create("Text", {
+				local keytext = Library:Create("Text", {
 					Font = Drawing.Fonts.Plex,
 					Size = 13,
 					Theme = "Un-Selected_Text",
@@ -5629,14 +5631,14 @@ function Library:New(cfg)
 						local text = (Keys[newkey] or tostring(newkey):gsub("Enum.KeyCode.", ""))
 
 						keytext.Text = "[" .. text .. "]"
-						Library:change_object_theme(keytext, "Un-Selected_Text")
+						Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 					else
 						key = nil
 
 						local text = "-"
 
 						keytext.Text = "[" .. text .. "]"
-						Library:change_object_theme(keytext, "Un-Selected_Text")
+						Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 					end
 
 					if bind ~= "" or bind ~= nil then
@@ -5662,7 +5664,7 @@ function Library:New(cfg)
 						local text = (Keys[newkey] or tostring(newkey):gsub("Enum.KeyCode.", ""))
 
 						keytext.Text = "[" .. text .. "]"
-						Library:change_object_theme(keytext, "Un-Selected_Text")
+						Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 					else
 						key = nil
 						Library.Flags[flag .. "_KEY"] = nil
@@ -5670,17 +5672,17 @@ function Library:New(cfg)
 						local text = "-"
 
 						keytext.Text = "[" .. text .. "]"
-						Library:change_object_theme(keytext, "Un-Selected_Text")
+						Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 					end
 				end
 
-				Library:connect(InputService.InputBegan, function(inp)
+				Library:Connect(InputService.InputBegan, function(inp)
 					if (inp.KeyCode == key or inp.UserInputType == key) and not binding then
 						if key_mode == "Hold" then
 							if flag then
 								Library.Flags[flag] = true
 							end
-							c = Library:connect(RunService.RenderStepped, function()
+							c = Library:Connect(RunService.RenderStepped, function()
 								if callback then
 									callback(true)
 								end
@@ -5704,9 +5706,9 @@ function Library:New(cfg)
 				holder.MouseButton1Click:Connect(function()
 					if not binding then
 						keytext.Text = "[-]"
-						Library:change_object_theme(keytext, "Accent")
+						Library:ChangeObjectTheme(keytext, "Accent")
 
-						binding = Library:connect(InputService.InputBegan, function(input, gpe)
+						binding = Library:Connect(InputService.InputBegan, function(input, gpe)
 							set(
 								input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 									or input.UserInputType
@@ -5715,14 +5717,14 @@ function Library:New(cfg)
 								input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 									or input.UserInputType
 							)
-							Library:disconnect(binding)
+							Library:Disconnect(binding)
 							task.wait()
 							binding = nil
 						end)
 					end
 				end)
 
-				Library:connect(InputService.InputEnded, function(inp)
+				Library:Connect(InputService.InputEnded, function(inp)
 					if key_mode == "Hold" then
 						if key ~= "" or key ~= nil then
 							if inp.KeyCode == key or inp.UserInputType == key then
@@ -5762,14 +5764,14 @@ function Library:New(cfg)
 				local flag = cfg.flag or cfg.Flag or Utility.nextflag()
 				local callback = cfg.callback or function() end
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Transparency = 0,
 					ZIndex = 14,
 					Size = UDim2.new(1, 0, 0, 22),
 					Parent = section_content,
 					Thickness = 1,
 				})
-				local textbox = Library:create("Square", {
+				local textbox = Library:Create("Square", {
 					Filled = true,
 					Visible = true,
 					Thickness = 0,
@@ -5788,10 +5790,10 @@ function Library:New(cfg)
 					textbox.Color = Color3.fromRGB(19, 19, 19)
 				end)
 
-				local outline1 = Library:outline(textbox, Color3.fromRGB(44, 44, 44), 14)
-				Library:outline(outline1, Color3.new(0, 0, 0), 14)
+				local outline1 = Library:Outline(textbox, Color3.fromRGB(44, 44, 44), 14)
+				Library:Outline(outline1, Color3.new(0, 0, 0), 14)
 
-				local text = Library:create("Text", {
+				local text = Library:Create("Text", {
 					Text = default,
 					Transparency = 1,
 					Visible = true,
@@ -5804,7 +5806,7 @@ function Library:New(cfg)
 					Size = 13,
 					Outline = true,
 				})
-				local placeholder = Library:create("Text", {
+				local placeholder = Library:Create("Text", {
 					Text = placeholder,
 					Transparency = 1,
 					Visible = true,
@@ -5858,7 +5860,7 @@ function Library:New(cfg)
 				local emptycolor = cfg.empty_color or Color3.fromRGB(255, 0, 0)
 				local healthamount = 100
 
-				local holder = Library:create("Square", {
+				local holder = Library:Create("Square", {
 					Parent = section_content,
 					Visible = true,
 					Transparency = 0,
@@ -5868,7 +5870,7 @@ function Library:New(cfg)
 					ZIndex = 14,
 				})
 
-				local preview_frame = Library:create("Square", {
+				local preview_frame = Library:Create("Square", {
 					Parent = holder,
 					Visible = true,
 					Transparency = 1,
@@ -5879,11 +5881,11 @@ function Library:New(cfg)
 					ZIndex = 15,
 				})
 				do
-					local outline = Library:outline(preview_frame, Color3.fromRGB(37, 37, 37), 14)
-					Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+					local outline = Library:Outline(preview_frame, Color3.fromRGB(37, 37, 37), 14)
+					Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 				end
 
-				local esp_head = Library:create("Square", {
+				local esp_head = Library:Create("Square", {
 					Parent = preview_frame,
 					Size = UDim2.new(0, 44, 0, 39),
 					Position = UDim2.new(0, 86, 0, 45),
@@ -5892,9 +5894,9 @@ function Library:New(cfg)
 					Filled = true,
 					ZIndex = 16,
 				})
-				local esp_head_outline = Library:outline(esp_head, Color3.fromRGB(0, 0, 0), 15)
+				local esp_head_outline = Library:Outline(esp_head, Color3.fromRGB(0, 0, 0), 15)
 
-				local esp_torso = Library:create("Square", {
+				local esp_torso = Library:Create("Square", {
 					Parent = preview_frame,
 					Size = UDim2.new(0, 146, 0, 77),
 					Position = UDim2.new(0, 34, 0, 85),
@@ -5903,9 +5905,9 @@ function Library:New(cfg)
 					Filled = true,
 					ZIndex = 16,
 				})
-				local esp_torso_outline = Library:outline(esp_torso, Color3.fromRGB(0, 0, 0), 15)
+				local esp_torso_outline = Library:Outline(esp_torso, Color3.fromRGB(0, 0, 0), 15)
 
-				local esp_legs = Library:create("Square", {
+				local esp_legs = Library:Create("Square", {
 					Parent = preview_frame,
 					Size = UDim2.new(0, 72, 0, 78),
 					Position = UDim2.new(0, 72, 0, 163),
@@ -5914,9 +5916,9 @@ function Library:New(cfg)
 					Filled = true,
 					ZIndex = 16,
 				})
-				local esp_legs_outline = Library:outline(esp_legs, Color3.fromRGB(0, 0, 0), 15)
+				local esp_legs_outline = Library:Outline(esp_legs, Color3.fromRGB(0, 0, 0), 15)
 
-				local esp_bounding_box = Library:create("Square", {
+				local esp_bounding_box = Library:Create("Square", {
 					Visible = false,
 					Parent = preview_frame,
 					Size = UDim2.new(0, 195, 0, 240),
@@ -5926,9 +5928,9 @@ function Library:New(cfg)
 					Filled = false,
 					ZIndex = 16,
 				})
-				local esp_bounding_box_outline = Library:outline(esp_bounding_box, Color3.fromRGB(0, 0, 0), 16)
+				local esp_bounding_box_outline = Library:Outline(esp_bounding_box, Color3.fromRGB(0, 0, 0), 16)
 
-				local esp_health_bar_outline = Library:create("Square", {
+				local esp_health_bar_outline = Library:Create("Square", {
 					Visible = false,
 					Parent = preview_frame,
 					Size = UDim2.new(0, 3, 0, 240),
@@ -5938,8 +5940,8 @@ function Library:New(cfg)
 					Filled = true,
 					ZIndex = 16,
 				})
-				local esp_health_bar_outline_2 = Library:outline(esp_health_bar_outline, Color3.new(0, 0, 0), 16)
-				local esp_health_bar = Library:create("Square", {
+				local esp_health_bar_outline_2 = Library:Outline(esp_health_bar_outline, Color3.new(0, 0, 0), 16)
+				local esp_health_bar = Library:Create("Square", {
 					Parent = esp_health_bar_outline,
 					Size = UDim2.new(1, 0, 1, 0),
 					Color = Color3.fromRGB(0, 255, 42),
@@ -5948,7 +5950,7 @@ function Library:New(cfg)
 					ZIndex = 16,
 					Position = UDim2.new(0, 0, 1, 0),
 				})
-				local esp_health_text = Library:create("Text", {
+				local esp_health_text = Library:Create("Text", {
 					Text = tostring("<- " .. healthamount),
 					Parent = esp_health_bar,
 					Visible = true,
@@ -5962,7 +5964,7 @@ function Library:New(cfg)
 					ZIndex = 16,
 				})
 
-				local esp_name = Library:create("Text", {
+				local esp_name = Library:Create("Text", {
 					Text = "player",
 					Parent = preview_frame,
 					Visible = false,
@@ -5975,7 +5977,7 @@ function Library:New(cfg)
 					Position = UDim2.new(0, 110, 0, 3),
 					ZIndex = 16,
 				})
-				local esp_distance = Library:create("Text", {
+				local esp_distance = Library:Create("Text", {
 					Text = "0 meters",
 					Parent = preview_frame,
 					Visible = false,
@@ -5988,7 +5990,7 @@ function Library:New(cfg)
 					Position = UDim2.new(0, 110, 0, 260),
 					ZIndex = 16,
 				})
-				local esp_weapon = Library:create("Text", {
+				local esp_weapon = Library:Create("Text", {
 					Text = "weapon",
 					Parent = preview_frame,
 					Visible = false,
@@ -6093,7 +6095,7 @@ function Library:New(cfg)
 			local offset = cfg.offset or 0
 			local size = cfg.size or cfg.Size or 200
 
-			local section_holder = Library:create("Square", {
+			local section_holder = Library:Create("Square", {
 				Parent = override and page_holder or side,
 				Visible = true,
 				Transparency = 1,
@@ -6105,11 +6107,11 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 			do
-				local outline = Library:outline(section_holder, Color3.fromRGB(37, 37, 37), 14)
-				Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+				local outline = Library:Outline(section_holder, Color3.fromRGB(37, 37, 37), 14)
+				Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 			end
 
-			local section_title = Library:create("Text", {
+			local section_title = Library:Create("Text", {
 				Text = name,
 				Parent = section_holder,
 				Visible = true,
@@ -6123,7 +6125,7 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 
-			local sections_holder = Library:create("Square", {
+			local sections_holder = Library:Create("Square", {
 				Parent = section_holder,
 				Visible = true,
 				Transparency = 1,
@@ -6135,11 +6137,11 @@ function Library:New(cfg)
 				ZIndex = 14,
 			})
 			do
-				local outline = Library:outline(sections_holder, Color3.fromRGB(32, 32, 32), 14)
-				Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+				local outline = Library:Outline(sections_holder, Color3.fromRGB(32, 32, 32), 14)
+				Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 			end
 
-			local sections_holder_inline = Library:create("Square", {
+			local sections_holder_inline = Library:Create("Square", {
 				Parent = sections_holder,
 				Visible = true,
 				Transparency = 0,
@@ -6175,7 +6177,7 @@ function Library:New(cfg)
 				local name = cfg.name or cfg.Name or "Section"
 				local open = cfg.default or cfg.Default or false
 
-				local button_holder = Library:create("Square", {
+				local button_holder = Library:Create("Square", {
 					Parent = sections_holder_inline,
 					Visible = true,
 					Transparency = 0,
@@ -6185,7 +6187,7 @@ function Library:New(cfg)
 				})
 				table.insert(self.buttons, button_holder)
 
-				local button_accent = Library:create("Square", {
+				local button_accent = Library:Create("Square", {
 					Parent = button_holder,
 					Visible = true,
 					Transparency = 1,
@@ -6197,8 +6199,8 @@ function Library:New(cfg)
 					ZIndex = 15,
 				})
 				do
-					Library:outline(button_accent, Color3.new(0, 0, 0), 14)
-					local gradient = Library:create("Image", {
+					Library:Outline(button_accent, Color3.new(0, 0, 0), 14)
+					local gradient = Library:Create("Image", {
 						Data = Images.gradient,
 						Transparency = 1,
 						Visible = true,
@@ -6209,7 +6211,7 @@ function Library:New(cfg)
 					table.insert(self.lines, button_accent)
 				end
 
-				local button_title = Library:create("Text", {
+				local button_title = Library:Create("Text", {
 					Text = name,
 					Parent = button_holder,
 					Visible = true,
@@ -6224,7 +6226,7 @@ function Library:New(cfg)
 				})
 				table.insert(self.titles, button_title)
 
-				local section_content = Library:create("Square", {
+				local section_content = Library:Create("Square", {
 					Visible = false,
 					Transparency = 0,
 					Size = override and UDim2.new(0.5, -32, 1, -45) or UDim2.new(1, -32, 1, -45),
@@ -6235,7 +6237,7 @@ function Library:New(cfg)
 				section_content:AddListLayout(9)
 				table.insert(self.sections, section_content)
 
-				local section_content1 = Library:create("Square", {
+				local section_content1 = Library:Create("Square", {
 					Visible = false,
 					Transparency = 0,
 					Size = override and UDim2.new(0.5, -32, 1, -45) or UDim2.new(1, -32, 1, -45),
@@ -6252,23 +6254,23 @@ function Library:New(cfg)
 				end
 
 				if open then
-					Library:change_object_theme(button_accent, "Accent")
-					Library:change_object_theme(button_title, "Accent")
+					Library:ChangeObjectTheme(button_accent, "Accent")
+					Library:ChangeObjectTheme(button_title, "Accent")
 					section_content.Visible = true
 					section_content1.Visible = true
 					fix_pos()
 				end
 
-				Library:connect(button_holder.MouseButton1Click, function()
+				Library:Connect(button_holder.MouseButton1Click, function()
 					for _, v in next, self.lines do
 						if v ~= button_accent then
-							Library:change_object_theme(v, "Un-Selected")
+							Library:ChangeObjectTheme(v, "Un-Selected")
 						end
 					end
 
 					for _, v in next, self.titles do
 						if v ~= button_title then
-							Library:change_object_theme(v, "Un-Selected_Text")
+							Library:ChangeObjectTheme(v, "Un-Selected_Text")
 						end
 					end
 
@@ -6286,13 +6288,13 @@ function Library:New(cfg)
 						section_holder.Size = UDim2.new(1, 0, 0, section_content1.AbsoluteContentSize + 55)
 					end
 
-					Library:change_object_theme(button_accent, "Accent")
-					Library:change_object_theme(button_title, "Accent")
+					Library:ChangeObjectTheme(button_accent, "Accent")
+					Library:ChangeObjectTheme(button_title, "Accent")
 					section_content.Visible = true
 					section_content1.Visible = true
 				end)
 				if override then
-					local div = Library:create("Square", {
+					local div = Library:Create("Square", {
 						Parent = section_holder,
 						Visible = true,
 						Transparency = 1,
@@ -6308,7 +6310,7 @@ function Library:New(cfg)
 						local side = cfg.side == "left" and section_content
 							or cfg.side == "right" and section_content1
 							or section_content
-						local preview_frame = Library:create("Square", {
+						local preview_frame = Library:Create("Square", {
 							Parent = side,
 							Visible = true,
 							Transparency = 0,
@@ -6320,7 +6322,7 @@ function Library:New(cfg)
 							ZIndex = 15,
 						})
 						do
-							local accent = Library:create("Square", {
+							local accent = Library:Create("Square", {
 								Parent = preview_frame,
 								Visible = true,
 								Transparency = 1,
@@ -6331,8 +6333,8 @@ function Library:New(cfg)
 								Filled = true,
 								ZIndex = 15,
 							})
-							Library:outline(accent, Color3.new(0, 0, 0), 14)
-							local gradient = Library:create("Image", {
+							Library:Outline(accent, Color3.new(0, 0, 0), 14)
+							local gradient = Library:Create("Image", {
 								Data = Images.gradient,
 								Transparency = 1,
 								Visible = true,
@@ -6342,7 +6344,7 @@ function Library:New(cfg)
 							})
 						end
 
-						local head = Library:create("Square", {
+						local head = Library:Create("Square", {
 							Parent = preview_frame,
 							Size = UDim2.new(0, 44, 0, 39),
 							Position = UDim2.new(0.5, -22, -0.175, 50),
@@ -6351,9 +6353,9 @@ function Library:New(cfg)
 							Filled = true,
 							ZIndex = 16,
 						})
-						local head_outline = Library:outline(head, Color3.fromRGB(0, 0, 0), 15)
+						local head_outline = Library:Outline(head, Color3.fromRGB(0, 0, 0), 15)
 
-						local larm = Library:create("Square", {
+						local larm = Library:Create("Square", {
 							Parent = preview_frame,
 							Size = UDim2.new(0, 36, 0, 77),
 							Position = UDim2.new(0.5, -73, -0.175, 90),
@@ -6362,9 +6364,9 @@ function Library:New(cfg)
 							Filled = true,
 							ZIndex = 16,
 						})
-						local larm_outline = Library:outline(larm, Color3.fromRGB(0, 0, 0), 15)
+						local larm_outline = Library:Outline(larm, Color3.fromRGB(0, 0, 0), 15)
 
-						local rarm = Library:create("Square", {
+						local rarm = Library:Create("Square", {
 							Parent = preview_frame,
 							Size = UDim2.new(0, 36, 0, 77),
 							Position = UDim2.new(0.5, 37, -0.175, 90),
@@ -6373,9 +6375,9 @@ function Library:New(cfg)
 							Filled = true,
 							ZIndex = 16,
 						})
-						local rarm_outline = Library:outline(rarm, Color3.fromRGB(0, 0, 0), 15)
+						local rarm_outline = Library:Outline(rarm, Color3.fromRGB(0, 0, 0), 15)
 
-						local torso = Library:create("Square", {
+						local torso = Library:Create("Square", {
 							Parent = preview_frame,
 							Size = UDim2.new(0, 72, 0, 77),
 							Position = UDim2.new(0.5, -36, -0.175, 90),
@@ -6384,9 +6386,9 @@ function Library:New(cfg)
 							Filled = true,
 							ZIndex = 16,
 						})
-						local torso_outline = Library:outline(torso, Color3.fromRGB(0, 0, 0), 15)
+						local torso_outline = Library:Outline(torso, Color3.fromRGB(0, 0, 0), 15)
 
-						local legs = Library:create("Square", {
+						local legs = Library:Create("Square", {
 							Parent = preview_frame,
 							Size = UDim2.new(0, 72, 0, 78),
 							Position = UDim2.new(0.5, -36, -0.175, 168),
@@ -6395,18 +6397,18 @@ function Library:New(cfg)
 							Filled = true,
 							ZIndex = 16,
 						})
-						local legs_outline = Library:outline(legs, Color3.fromRGB(0, 0, 0), 15)
+						local legs_outline = Library:Outline(legs, Color3.fromRGB(0, 0, 0), 15)
 
 						function preview:change_state(obj, state)
 							if obj == "arms" then
-								Library:change_object_theme(larm, state == true and "Accent" or "Un-Selected_Text")
-								Library:change_object_theme(rarm, state == true and "Accent" or "Un-Selected_Text")
+								Library:ChangeObjectTheme(larm, state == true and "Accent" or "Un-Selected_Text")
+								Library:ChangeObjectTheme(rarm, state == true and "Accent" or "Un-Selected_Text")
 							elseif obj == "legs" then
-								Library:change_object_theme(legs, state == true and "Accent" or "Un-Selected_Text")
+								Library:ChangeObjectTheme(legs, state == true and "Accent" or "Un-Selected_Text")
 							elseif obj == "torso" then
-								Library:change_object_theme(torso, state == true and "Accent" or "Un-Selected_Text")
+								Library:ChangeObjectTheme(torso, state == true and "Accent" or "Un-Selected_Text")
 							elseif obj == "head" then
-								Library:change_object_theme(head, state == true and "Accent" or "Un-Selected_Text")
+								Library:ChangeObjectTheme(head, state == true and "Accent" or "Un-Selected_Text")
 							end
 						end
 						return preview
@@ -6426,7 +6428,7 @@ function Library:New(cfg)
 					local callback = cfg.callback or cfg.Callback or function() end
 					local toggled = false
 
-					local holder = Library:create("Square", {
+					local holder = Library:Create("Square", {
 						Parent = side,
 						Visible = true,
 						Transparency = 0,
@@ -6436,7 +6438,7 @@ function Library:New(cfg)
 						ZIndex = 14,
 					})
 
-					local toggle_frame = Library:create("Square", {
+					local toggle_frame = Library:Create("Square", {
 						Parent = holder,
 						Visible = true,
 						Transparency = 1,
@@ -6447,9 +6449,9 @@ function Library:New(cfg)
 						ZIndex = 14,
 					})
 					do
-						local outline = Library:outline(toggle_frame, Color3.fromRGB(0, 0, 0), 14)
+						local outline = Library:Outline(toggle_frame, Color3.fromRGB(0, 0, 0), 14)
 					end
-					local gradient = Library:create("Image", {
+					local gradient = Library:Create("Image", {
 						Data = Images.gradient,
 						Transparency = 1,
 						Visible = true,
@@ -6458,7 +6460,7 @@ function Library:New(cfg)
 						ZIndex = 14,
 					})
 
-					local toggle_title = Library:create("Text", {
+					local toggle_title = Library:Create("Text", {
 						Text = name,
 						Parent = holder,
 						Visible = true,
@@ -6475,9 +6477,9 @@ function Library:New(cfg)
 					local function setstate()
 						toggled = not toggled
 						if toggled then
-							Library:change_object_theme(toggle_frame, "Accent")
+							Library:ChangeObjectTheme(toggle_frame, "Accent")
 						else
-							Library:change_object_theme(toggle_frame, "Toggle Background")
+							Library:ChangeObjectTheme(toggle_frame, "Toggle Background")
 						end
 						Library.Flags[flag] = toggled
 						callback(toggled)
@@ -6487,13 +6489,13 @@ function Library:New(cfg)
 
 					holder.MouseEnter:Connect(function()
 						if not toggled then
-							Library:change_object_theme(toggle_frame, "Toggle Background Highlight")
+							Library:ChangeObjectTheme(toggle_frame, "Toggle Background Highlight")
 						end
 					end)
 
 					holder.MouseLeave:Connect(function()
 						if not toggled then
-							Library:change_object_theme(toggle_frame, "Toggle Background")
+							Library:ChangeObjectTheme(toggle_frame, "Toggle Background")
 						end
 					end)
 
@@ -6544,7 +6546,7 @@ function Library:New(cfg)
 						local callback = cfg.callback or function() end
 						local key_mode = mode
 
-						local keyholder = Library:create("Square", {
+						local keyholder = Library:Create("Square", {
 							Size = UDim2.new(0, 40, 1, 0),
 							Position = UDim2.new(1, -60, 0, 0),
 							Transparency = 0,
@@ -6554,7 +6556,7 @@ function Library:New(cfg)
 							Filled = false,
 						})
 
-						local keytext = Library:create("Text", {
+						local keytext = Library:Create("Text", {
 							Font = Drawing.Fonts.Plex,
 							Size = 13,
 							Theme = "Un-Selected_Text",
@@ -6589,14 +6591,14 @@ function Library:New(cfg)
 								local text = (Keys[newkey] or tostring(newkey):gsub("Enum.KeyCode.", ""))
 
 								keytext.Text = "[" .. text .. "]"
-								Library:change_object_theme(keytext, "Un-Selected_Text")
+								Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 							else
 								key = nil
 
 								local text = "-"
 
 								keytext.Text = "[" .. text .. "]"
-								Library:change_object_theme(keytext, "Un-Selected_Text")
+								Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 							end
 
 							if bind ~= "" or bind ~= nil then
@@ -6622,7 +6624,7 @@ function Library:New(cfg)
 								local text = (Keys[newkey] or tostring(newkey):gsub("Enum.KeyCode.", ""))
 
 								keytext.Text = "[" .. text .. "]"
-								Library:change_object_theme(keytext, "Un-Selected_Text")
+								Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 							else
 								key = nil
 								Library.Flags[flag .. "_KEY"] = nil
@@ -6630,17 +6632,17 @@ function Library:New(cfg)
 								local text = "-"
 
 								keytext.Text = "[" .. text .. "]"
-								Library:change_object_theme(keytext, "Un-Selected_Text")
+								Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 							end
 						end
 
-						Library:connect(InputService.InputBegan, function(inp)
+						Library:Connect(InputService.InputBegan, function(inp)
 							if (inp.KeyCode == key or inp.UserInputType == key) and not binding then
 								if key_mode == "Hold" then
 									if flag then
 										Library.Flags[flag] = true
 									end
-									c = Library:connect(RunService.RenderStepped, function()
+									c = Library:Connect(RunService.RenderStepped, function()
 										if callback then
 											callback(true)
 										end
@@ -6664,9 +6666,9 @@ function Library:New(cfg)
 						keyholder.MouseButton1Click:Connect(function()
 							if not binding then
 								keytext.Text = "[-]"
-								Library:change_object_theme(keytext, "Accent")
+								Library:ChangeObjectTheme(keytext, "Accent")
 
-								binding = Library:connect(InputService.InputBegan, function(input, gpe)
+								binding = Library:Connect(InputService.InputBegan, function(input, gpe)
 									set(
 										input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 											or input.UserInputType
@@ -6675,14 +6677,14 @@ function Library:New(cfg)
 										input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 											or input.UserInputType
 									)
-									Library:disconnect(binding)
+									Library:Disconnect(binding)
 									task.wait()
 									binding = nil
 								end)
 							end
 						end)
 
-						Library:connect(InputService.InputEnded, function(inp)
+						Library:Connect(InputService.InputEnded, function(inp)
 							if key_mode == "Hold" then
 								if key ~= "" or key ~= nil then
 									if inp.KeyCode == key or inp.UserInputType == key then
@@ -6723,7 +6725,7 @@ function Library:New(cfg)
 						or cfg.side == "right" and section_content1
 						or section_content
 
-					local holder = Library:create("Square", {
+					local holder = Library:Create("Square", {
 						Parent = side,
 						Visible = true,
 						Transparency = 0,
@@ -6733,7 +6735,7 @@ function Library:New(cfg)
 						ZIndex = 14,
 					})
 
-					local div = Library:create("Square", {
+					local div = Library:Create("Square", {
 						Parent = holder,
 						Visible = true,
 						Transparency = 1,
@@ -6744,7 +6746,7 @@ function Library:New(cfg)
 						Filled = true,
 						ZIndex = 14,
 					})
-					local title = Library:create("Text", {
+					local title = Library:Create("Text", {
 						Text = name,
 						Parent = holder,
 						Visible = true,
@@ -6757,7 +6759,7 @@ function Library:New(cfg)
 						Position = UDim2.new(0, 20, 0, -5),
 						ZIndex = 14,
 					})
-					local div = Library:create("Square", {
+					local div = Library:Create("Square", {
 						Parent = holder,
 						Visible = true,
 						Transparency = 1,
@@ -6796,7 +6798,7 @@ function Library:New(cfg)
 					local flag = cfg.flag or Utility.nextflag()
 					local callback = cfg.callback or function() end
 
-					local holder = Library:create("Square", {
+					local holder = Library:Create("Square", {
 						Parent = side,
 						Visible = true,
 						Transparency = 0,
@@ -6806,7 +6808,7 @@ function Library:New(cfg)
 						ZIndex = 14,
 					})
 
-					local slider_frame = Library:create("Square", {
+					local slider_frame = Library:Create("Square", {
 						Parent = holder,
 						Visible = true,
 						Transparency = 1,
@@ -6818,9 +6820,9 @@ function Library:New(cfg)
 						Position = name and UDim2.new(0, 23, 0, 14) or UDim2.new(0, 23, 0, 3),
 					})
 					do
-						local outline = Library:outline(slider_frame, Color3.fromRGB(0, 0, 0), 14)
+						local outline = Library:Outline(slider_frame, Color3.fromRGB(0, 0, 0), 14)
 					end
-					Library:create("Image", {
+					Library:Create("Image", {
 						Data = Images.gradient,
 						Transparency = 1,
 						Visible = true,
@@ -6830,7 +6832,7 @@ function Library:New(cfg)
 					})
 
 					if name then
-						local slider_title = Library:create("Text", {
+						local slider_title = Library:Create("Text", {
 							Text = name,
 							Parent = holder,
 							Visible = true,
@@ -6845,7 +6847,7 @@ function Library:New(cfg)
 						})
 					end
 
-					local slider_fill = Library:create("Square", {
+					local slider_fill = Library:Create("Square", {
 						Parent = slider_frame,
 						Visible = true,
 						Transparency = 1,
@@ -6857,7 +6859,7 @@ function Library:New(cfg)
 						Position = UDim2.new(0, 0, 0, 0),
 					})
 
-					local slider_value = Library:create("Text", {
+					local slider_value = Library:Create("Text", {
 						Text = text,
 						Parent = slider_fill,
 						Visible = true,
@@ -6871,7 +6873,7 @@ function Library:New(cfg)
 						ZIndex = 15,
 					})
 
-					local slider_drag = Library:create("Square", {
+					local slider_drag = Library:Create("Square", {
 						Parent = slider_frame,
 						Visible = true,
 						Transparency = 0,
@@ -6906,39 +6908,39 @@ function Library:New(cfg)
 					end
 
 					holder.MouseEnter:Connect(function()
-						Library:change_object_theme(slider_frame, "Toggle Background Highlight")
+						Library:ChangeObjectTheme(slider_frame, "Toggle Background Highlight")
 					end)
 					holder.MouseLeave:Connect(function()
-						Library:change_object_theme(slider_frame, "Toggle Background")
+						Library:ChangeObjectTheme(slider_frame, "Toggle Background")
 					end)
 
-					Library:connect(slider_drag.InputBegan, function(input)
+					Library:Connect(slider_drag.InputBegan, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseButton1 then
 							sliding = true
 							slide(input)
 						end
 					end)
 
-					Library:connect(slider_drag.InputEnded, function(input)
+					Library:Connect(slider_drag.InputEnded, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseButton1 then
 							sliding = false
 						end
 					end)
 
-					Library:connect(slider_fill.InputBegan, function(input)
+					Library:Connect(slider_fill.InputBegan, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseButton1 then
 							sliding = true
 							slide(input)
 						end
 					end)
 
-					Library:connect(slider_fill.InputEnded, function(input)
+					Library:Connect(slider_fill.InputEnded, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseButton1 then
 							sliding = false
 						end
 					end)
 
-					Library:connect(InputService.InputChanged, function(input)
+					Library:Connect(InputService.InputChanged, function(input)
 						if input.UserInputType == Enum.UserInputType.MouseMovement then
 							if sliding then
 								slide(input)
@@ -6947,7 +6949,7 @@ function Library:New(cfg)
 					end)
 
 					if allow then
-						local slider_question = Library:create("Text", {
+						local slider_question = Library:Create("Text", {
 							Text = "?",
 							Parent = holder,
 							Visible = true,
@@ -6960,7 +6962,7 @@ function Library:New(cfg)
 							Position = UDim2.new(1, -36, 0, -2),
 							ZIndex = 14,
 						})
-						local question_button = Library:create("Square", {
+						local question_button = Library:Create("Square", {
 							Filled = true,
 							Thickness = 0,
 							Parent = holder,
@@ -6972,7 +6974,7 @@ function Library:New(cfg)
 							ZIndex = 29,
 						})
 
-						local slider_window = Library:create("Square", {
+						local slider_window = Library:Create("Square", {
 							Filled = true,
 							Thickness = 0,
 							Parent = slider_drag,
@@ -6984,10 +6986,10 @@ function Library:New(cfg)
 						})
 						table.insert(FadeThings, slider_window)
 
-						local outline3 = Library:outline(slider_window, Color3.fromRGB(44, 44, 44))
-						Library:outline(outline3, Color3.fromRGB(0, 0, 0))
+						local outline3 = Library:Outline(slider_window, Color3.fromRGB(44, 44, 44))
+						Library:Outline(outline3, Color3.fromRGB(0, 0, 0))
 
-						local windowback = Library:create("Square", {
+						local windowback = Library:Create("Square", {
 							Filled = true,
 							Thickness = 0,
 							Parent = slider_window,
@@ -6998,7 +7000,7 @@ function Library:New(cfg)
 							ZIndex = 29,
 						})
 
-						local window_page = Library:create("Square", {
+						local window_page = Library:Create("Square", {
 							Filled = false,
 							Thickness = 0,
 							Transparency = 0,
@@ -7011,7 +7013,7 @@ function Library:New(cfg)
 						})
 						window_page:AddListLayout(3)
 
-						local slider_button = Library:create("Square", {
+						local slider_button = Library:Create("Square", {
 							Filled = true,
 							Thickness = 0,
 							Parent = slider_window,
@@ -7024,7 +7026,7 @@ function Library:New(cfg)
 
 						local isfading = false
 
-						local fadetext = Library:create("Text", {
+						local fadetext = Library:Create("Text", {
 							Text = "fading",
 							Parent = slider_button,
 							Visible = true,
@@ -7038,8 +7040,8 @@ function Library:New(cfg)
 							ZIndex = 29,
 						})
 
-						local outline3 = Library:outline(slider_window, Color3.fromRGB(44, 44, 44))
-						Library:outline(outline3, Color3.fromRGB(0, 0, 0))
+						local outline3 = Library:Outline(slider_window, Color3.fromRGB(44, 44, 44))
+						Library:Outline(outline3, Color3.fromRGB(0, 0, 0))
 
 						local startslide = Library.CreateSlider({
 							parent = window_page,
@@ -7090,15 +7092,15 @@ function Library:New(cfg)
 							slider_window.Visible = not slider_window.Visible
 						end)
 						question_button.MouseEnter:Connect(function()
-							Library:change_object_theme(slider_question, "Accent")
+							Library:ChangeObjectTheme(slider_question, "Accent")
 						end)
 						question_button.MouseLeave:Connect(function()
-							Library:change_object_theme(slider_question, "Text")
+							Library:ChangeObjectTheme(slider_question, "Text")
 						end)
 						slider_button.MouseButton1Click:Connect(function()
 							isfading = not isfading
 							setfade(isfading)
-							Library:change_object_theme(fadetext, isfading and "Accent" or "Text")
+							Library:ChangeObjectTheme(fadetext, isfading and "Accent" or "Text")
 						end)
 						task.spawn(function()
 							while task.wait() do
@@ -7144,7 +7146,7 @@ function Library:New(cfg)
 						or cfg.side == "right" and section_content1
 						or section_content
 
-					local holder = Library:create("Square", {
+					local holder = Library:Create("Square", {
 						Parent = side,
 						Visible = true,
 						Transparency = 0,
@@ -7154,7 +7156,7 @@ function Library:New(cfg)
 						ZIndex = 14,
 					})
 
-					local title = Library:create("Text", {
+					local title = Library:Create("Text", {
 						Text = name,
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -7205,7 +7207,7 @@ function Library:New(cfg)
 						end
 					end
 
-					local holder = Library:create("Square", {
+					local holder = Library:Create("Square", {
 						Transparency = 0,
 						ZIndex = 14,
 						Size = UDim2.new(1, 0, 0, name and 32 or 19),
@@ -7214,7 +7216,7 @@ function Library:New(cfg)
 					})
 
 					if name then
-						local title = Library:create("Text", {
+						local title = Library:Create("Text", {
 							Text = name,
 							Font = Drawing.Fonts.Plex,
 							Size = 13,
@@ -7277,7 +7279,7 @@ function Library:New(cfg)
 						end
 					end
 
-					local holder = Library:create("Square", {
+					local holder = Library:Create("Square", {
 						Transparency = 0,
 						ZIndex = 18,
 						Size = UDim2.new(1, 0, 0, name and 32 or 19),
@@ -7286,7 +7288,7 @@ function Library:New(cfg)
 					})
 
 					if name then
-						local title = Library:create("Text", {
+						local title = Library:Create("Text", {
 							Text = name,
 							Font = Drawing.Fonts.Plex,
 							Size = 13,
@@ -7342,7 +7344,7 @@ function Library:New(cfg)
 						end
 					end
 
-					local holder = Library:create("Square", {
+					local holder = Library:Create("Square", {
 						Transparency = 0,
 						ZIndex = 14,
 						Size = UDim2.new(1, 0, 0, name and 32 or 19),
@@ -7351,7 +7353,7 @@ function Library:New(cfg)
 					})
 
 					if name then
-						local title = Library:create("Text", {
+						local title = Library:Create("Text", {
 							Text = name,
 							Font = Drawing.Fonts.Plex,
 							Size = 13,
@@ -7388,11 +7390,11 @@ function Library:New(cfg)
 						or section_content
 					local button_confirm = cfg.confirm or cfg.Confirm or false
 
-					local holder = Library:create(
+					local holder = Library:Create(
 						"Square",
 						{ Transparency = 0, ZIndex = 14, Size = UDim2.new(1, 0, 0, 22), Parent = side, Thickness = 1 }
 					)
-					local ButtonFrame = Library:create("Square", {
+					local ButtonFrame = Library:Create("Square", {
 						Filled = true,
 						Visible = true,
 						Thickness = 0,
@@ -7411,10 +7413,10 @@ function Library:New(cfg)
 						ButtonFrame.Color = Color3.fromRGB(25, 25, 25)
 					end)
 
-					local outline1 = Library:outline(ButtonFrame, Color3.fromRGB(44, 44, 44), 14)
-					Library:outline(outline1, Color3.new(0, 0, 0), 14)
+					local outline1 = Library:Outline(ButtonFrame, Color3.fromRGB(44, 44, 44), 14)
+					Library:Outline(outline1, Color3.new(0, 0, 0), 14)
 
-					local icon = Library:create("Text", {
+					local icon = Library:Create("Text", {
 						Text = name,
 						Transparency = 1,
 						Visible = true,
@@ -7429,13 +7431,13 @@ function Library:New(cfg)
 					})
 
 					local clicked, counting = false, false
-					Library:connect(ButtonFrame.MouseButton1Click, function()
+					Library:Connect(ButtonFrame.MouseButton1Click, function()
 						task.spawn(function()
 							if button_confirm then
 								if clicked then
 									clicked = false
 									counting = false
-									Library:change_object_theme(ButtonFrame, "Text")
+									Library:ChangeObjectTheme(ButtonFrame, "Text")
 									ButtonFrame.Text = button_name
 									callback()
 								else
@@ -7446,12 +7448,12 @@ function Library:New(cfg)
 											break
 										end
 										ButtonFrame.Text = "confirm " .. button_name .. "? " .. tostring(i)
-										Library:change_object_theme(ButtonFrame, "Accent")
+										Library:ChangeObjectTheme(ButtonFrame, "Accent")
 										wait(1)
 									end
 									clicked = false
 									counting = false
-									Library:change_object_theme(ButtonFrame, "Text")
+									Library:ChangeObjectTheme(ButtonFrame, "Text")
 									ButtonFrame.Text = button_name
 								end
 							else
@@ -7459,11 +7461,11 @@ function Library:New(cfg)
 							end
 						end)
 					end)
-					Library:connect(ButtonFrame.MouseButton1Down, function()
-						Library:change_object_theme(icon, "Accent")
+					Library:Connect(ButtonFrame.MouseButton1Down, function()
+						Library:ChangeObjectTheme(icon, "Accent")
 					end)
-					Library:connect(ButtonFrame.MouseButton1Up, function()
-						Library:change_object_theme(icon, "Text")
+					Library:Connect(ButtonFrame.MouseButton1Up, function()
+						Library:ChangeObjectTheme(icon, "Text")
 					end)
 
 					function button_tbl:button(cfg)
@@ -7471,7 +7473,7 @@ function Library:New(cfg)
 						local callback = cfg.callback or cfg.Callback or function() end
 						ButtonFrame.Size = UDim2.new(1 / 2, -40, 0, 17)
 
-						local ButtonFrame_2 = Library:create("Square", {
+						local ButtonFrame_2 = Library:Create("Square", {
 							Filled = true,
 							Visible = true,
 							Thickness = 0,
@@ -7490,10 +7492,10 @@ function Library:New(cfg)
 							ButtonFrame_2.Color = Color3.fromRGB(25, 25, 25)
 						end)
 
-						local outline1 = Library:outline(ButtonFrame_2, Color3.fromRGB(44, 44, 44), 14)
-						Library:outline(outline1, Color3.new(0, 0, 0), 14)
+						local outline1 = Library:Outline(ButtonFrame_2, Color3.fromRGB(44, 44, 44), 14)
+						Library:Outline(outline1, Color3.new(0, 0, 0), 14)
 
-						local icon = Library:create("Text", {
+						local icon = Library:Create("Text", {
 							Text = name,
 							Transparency = 1,
 							Visible = true,
@@ -7508,13 +7510,13 @@ function Library:New(cfg)
 						})
 
 						local clicked, counting = false, false
-						Library:connect(ButtonFrame_2.MouseButton1Click, function()
+						Library:Connect(ButtonFrame_2.MouseButton1Click, function()
 							task.spawn(function()
 								if button_confirm then
 									if clicked then
 										clicked = false
 										counting = false
-										Library:change_object_theme(icon, "Text")
+										Library:ChangeObjectTheme(icon, "Text")
 										icon.Text = button_name
 										callback()
 									else
@@ -7525,12 +7527,12 @@ function Library:New(cfg)
 												break
 											end
 											icon.Text = "confirm " .. button_name .. "? " .. tostring(i)
-											Library:change_object_theme(icon, "Accent")
+											Library:ChangeObjectTheme(icon, "Accent")
 											wait(1)
 										end
 										clicked = false
 										counting = false
-										Library:change_object_theme(icon, "Text")
+										Library:ChangeObjectTheme(icon, "Text")
 										icon.Text = button_name
 									end
 								else
@@ -7538,11 +7540,11 @@ function Library:New(cfg)
 								end
 							end)
 						end)
-						Library:connect(ButtonFrame_2.MouseButton1Down, function()
-							Library:change_object_theme(icon, "Accent")
+						Library:Connect(ButtonFrame_2.MouseButton1Down, function()
+							Library:ChangeObjectTheme(icon, "Accent")
 						end)
-						Library:connect(ButtonFrame_2.MouseButton1Up, function()
-							Library:change_object_theme(icon, "Text")
+						Library:Connect(ButtonFrame_2.MouseButton1Up, function()
+							Library:ChangeObjectTheme(icon, "Text")
 						end)
 					end
 
@@ -7565,7 +7567,7 @@ function Library:New(cfg)
 					local allow_tool = cfg.tooltip or cfg.ToolTip or false
 					local defaultalpha = cfg.alpha or cfg.Alpha or 1
 
-					local holder = Library:create("Square", {
+					local holder = Library:Create("Square", {
 						Transparency = 0,
 						Filled = true,
 						Thickness = 1,
@@ -7574,7 +7576,7 @@ function Library:New(cfg)
 						Parent = side,
 					})
 
-					local title = Library:create("Text", {
+					local title = Library:Create("Text", {
 						Text = name,
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -7630,12 +7632,12 @@ function Library:New(cfg)
 					local callback = cfg.callback or function() end
 					local key_mode = mode
 
-					local holder = Library:create(
+					local holder = Library:Create(
 						"Square",
 						{ Transparency = 0, ZIndex = 15, Size = UDim2.new(1, 0, 0, 6), Parent = side }
 					)
 
-					local title = Library:create("Text", {
+					local title = Library:Create("Text", {
 						Text = name,
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
@@ -7648,7 +7650,7 @@ function Library:New(cfg)
 
 					local keybindname = key_name or ""
 
-					local keytext = Library:create("Text", {
+					local keytext = Library:Create("Text", {
 						Font = Drawing.Fonts.Plex,
 						Size = 13,
 						Theme = "Un-Selected_Text",
@@ -7683,14 +7685,14 @@ function Library:New(cfg)
 							local text = (Keys[newkey] or tostring(newkey):gsub("Enum.KeyCode.", ""))
 
 							keytext.Text = "[" .. text .. "]"
-							Library:change_object_theme(keytext, "Un-Selected_Text")
+							Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 						else
 							key = nil
 
 							local text = "-"
 
 							keytext.Text = "[" .. text .. "]"
-							Library:change_object_theme(keytext, "Un-Selected_Text")
+							Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 						end
 
 						if bind ~= "" or bind ~= nil then
@@ -7716,7 +7718,7 @@ function Library:New(cfg)
 							local text = (Keys[newkey] or tostring(newkey):gsub("Enum.KeyCode.", ""))
 
 							keytext.Text = "[" .. text .. "]"
-							Library:change_object_theme(keytext, "Un-Selected_Text")
+							Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 						else
 							key = nil
 							Library.Flags[flag .. "_KEY"] = nil
@@ -7724,17 +7726,17 @@ function Library:New(cfg)
 							local text = "-"
 
 							keytext.Text = "[" .. text .. "]"
-							Library:change_object_theme(keytext, "Un-Selected_Text")
+							Library:ChangeObjectTheme(keytext, "Un-Selected_Text")
 						end
 					end
 
-					Library:connect(InputService.InputBegan, function(inp)
+					Library:Connect(InputService.InputBegan, function(inp)
 						if (inp.KeyCode == key or inp.UserInputType == key) and not binding then
 							if key_mode == "Hold" then
 								if flag then
 									Library.Flags[flag] = true
 								end
-								c = Library:connect(RunService.RenderStepped, function()
+								c = Library:Connect(RunService.RenderStepped, function()
 									if callback then
 										callback(true)
 									end
@@ -7758,9 +7760,9 @@ function Library:New(cfg)
 					holder.MouseButton1Click:Connect(function()
 						if not binding then
 							keytext.Text = "[-]"
-							Library:change_object_theme(keytext, "Accent")
+							Library:ChangeObjectTheme(keytext, "Accent")
 
-							binding = Library:connect(InputService.InputBegan, function(input, gpe)
+							binding = Library:Connect(InputService.InputBegan, function(input, gpe)
 								set(
 									input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 										or input.UserInputType
@@ -7769,14 +7771,14 @@ function Library:New(cfg)
 									input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode
 										or input.UserInputType
 								)
-								Library:disconnect(binding)
+								Library:Disconnect(binding)
 								task.wait()
 								binding = nil
 							end)
 						end
 					end)
 
-					Library:connect(InputService.InputEnded, function(inp)
+					Library:Connect(InputService.InputEnded, function(inp)
 						if key_mode == "Hold" then
 							if key ~= "" or key ~= nil then
 								if inp.KeyCode == key or inp.UserInputType == key then
@@ -7818,11 +7820,11 @@ function Library:New(cfg)
 					local flag = cfg.flag or cfg.Flag or Utility.nextflag()
 					local callback = cfg.callback or function() end
 
-					local holder = Library:create(
+					local holder = Library:Create(
 						"Square",
 						{ Transparency = 0, ZIndex = 14, Size = UDim2.new(1, 0, 0, 22), Parent = side, Thickness = 1 }
 					)
-					local textbox = Library:create("Square", {
+					local textbox = Library:Create("Square", {
 						Filled = true,
 						Visible = true,
 						Thickness = 0,
@@ -7841,10 +7843,10 @@ function Library:New(cfg)
 						textbox.Color = Color3.fromRGB(19, 19, 19)
 					end)
 
-					local outline1 = Library:outline(textbox, Color3.fromRGB(44, 44, 44), 14)
-					Library:outline(outline1, Color3.new(0, 0, 0), 14)
+					local outline1 = Library:Outline(textbox, Color3.fromRGB(44, 44, 44), 14)
+					Library:Outline(outline1, Color3.new(0, 0, 0), 14)
 
-					local text = Library:create("Text", {
+					local text = Library:Create("Text", {
 						Text = default,
 						Transparency = 1,
 						Visible = true,
@@ -7857,7 +7859,7 @@ function Library:New(cfg)
 						Size = 13,
 						Outline = true,
 					})
-					local placeholder = Library:create("Text", {
+					local placeholder = Library:Create("Text", {
 						Text = placeholder,
 						Transparency = 1,
 						Visible = true,
@@ -7914,7 +7916,7 @@ function Library:New(cfg)
 					local emptycolor = cfg.empty_color or Color3.fromRGB(255, 0, 0)
 					local healthamount = 100
 
-					local holder = Library:create("Square", {
+					local holder = Library:Create("Square", {
 						Parent = side,
 						Visible = true,
 						Transparency = 0,
@@ -7924,7 +7926,7 @@ function Library:New(cfg)
 						ZIndex = 14,
 					})
 
-					local preview_frame = Library:create("Square", {
+					local preview_frame = Library:Create("Square", {
 						Parent = holder,
 						Visible = true,
 						Transparency = 1,
@@ -7935,11 +7937,11 @@ function Library:New(cfg)
 						ZIndex = 15,
 					})
 					do
-						local outline = Library:outline(preview_frame, Color3.fromRGB(37, 37, 37), 14)
-						Library:outline(outline, Color3.fromRGB(0, 0, 0), 14)
+						local outline = Library:Outline(preview_frame, Color3.fromRGB(37, 37, 37), 14)
+						Library:Outline(outline, Color3.fromRGB(0, 0, 0), 14)
 					end
 
-					local esp_head = Library:create("Square", {
+					local esp_head = Library:Create("Square", {
 						Parent = preview_frame,
 						Size = UDim2.new(0, 44, 0, 39),
 						Position = UDim2.new(0, 86, 0, 45),
@@ -7948,9 +7950,9 @@ function Library:New(cfg)
 						Filled = true,
 						ZIndex = 16,
 					})
-					local esp_head_outline = Library:outline(esp_head, Color3.fromRGB(0, 0, 0), 15)
+					local esp_head_outline = Library:Outline(esp_head, Color3.fromRGB(0, 0, 0), 15)
 
-					local esp_torso = Library:create("Square", {
+					local esp_torso = Library:Create("Square", {
 						Parent = preview_frame,
 						Size = UDim2.new(0, 146, 0, 77),
 						Position = UDim2.new(0, 34, 0, 85),
@@ -7959,9 +7961,9 @@ function Library:New(cfg)
 						Filled = true,
 						ZIndex = 16,
 					})
-					local esp_torso_outline = Library:outline(esp_torso, Color3.fromRGB(0, 0, 0), 15)
+					local esp_torso_outline = Library:Outline(esp_torso, Color3.fromRGB(0, 0, 0), 15)
 
-					local esp_legs = Library:create("Square", {
+					local esp_legs = Library:Create("Square", {
 						Parent = preview_frame,
 						Size = UDim2.new(0, 72, 0, 78),
 						Position = UDim2.new(0, 72, 0, 163),
@@ -7970,9 +7972,9 @@ function Library:New(cfg)
 						Filled = true,
 						ZIndex = 16,
 					})
-					local esp_legs_outline = Library:outline(esp_legs, Color3.fromRGB(0, 0, 0), 15)
+					local esp_legs_outline = Library:Outline(esp_legs, Color3.fromRGB(0, 0, 0), 15)
 
-					local esp_bounding_box = Library:create("Square", {
+					local esp_bounding_box = Library:Create("Square", {
 						Visible = false,
 						Parent = preview_frame,
 						Size = UDim2.new(0, 195, 0, 240),
@@ -7982,9 +7984,9 @@ function Library:New(cfg)
 						Filled = false,
 						ZIndex = 16,
 					})
-					local esp_bounding_box_outline = Library:outline(esp_bounding_box, Color3.fromRGB(0, 0, 0), 16)
+					local esp_bounding_box_outline = Library:Outline(esp_bounding_box, Color3.fromRGB(0, 0, 0), 16)
 
-					local esp_health_bar_outline = Library:create("Square", {
+					local esp_health_bar_outline = Library:Create("Square", {
 						Visible = false,
 						Parent = preview_frame,
 						Size = UDim2.new(0, 3, 0, 240),
@@ -7994,8 +7996,8 @@ function Library:New(cfg)
 						Filled = true,
 						ZIndex = 16,
 					})
-					local esp_health_bar_outline_2 = Library:outline(esp_health_bar_outline, Color3.new(0, 0, 0), 16)
-					local esp_health_bar = Library:create("Square", {
+					local esp_health_bar_outline_2 = Library:Outline(esp_health_bar_outline, Color3.new(0, 0, 0), 16)
+					local esp_health_bar = Library:Create("Square", {
 						Parent = esp_health_bar_outline,
 						Size = UDim2.new(1, 0, 1, 0),
 						Color = Color3.fromRGB(0, 255, 42),
@@ -8004,7 +8006,7 @@ function Library:New(cfg)
 						ZIndex = 16,
 						Position = UDim2.new(0, 0, 1, 0),
 					})
-					local esp_health_text = Library:create("Text", {
+					local esp_health_text = Library:Create("Text", {
 						Text = tostring("<- " .. healthamount),
 						Parent = esp_health_bar,
 						Visible = true,
@@ -8018,7 +8020,7 @@ function Library:New(cfg)
 						ZIndex = 16,
 					})
 
-					local esp_name = Library:create("Text", {
+					local esp_name = Library:Create("Text", {
 						Text = "player",
 						Parent = preview_frame,
 						Visible = false,
@@ -8031,7 +8033,7 @@ function Library:New(cfg)
 						Position = UDim2.new(0, 110, 0, 3),
 						ZIndex = 16,
 					})
-					local esp_distance = Library:create("Text", {
+					local esp_distance = Library:Create("Text", {
 						Text = "0 meters",
 						Parent = preview_frame,
 						Visible = false,
@@ -8044,7 +8046,7 @@ function Library:New(cfg)
 						Position = UDim2.new(0, 110, 0, 260),
 						ZIndex = 16,
 					})
-					local esp_weapon = Library:create("Text", {
+					local esp_weapon = Library:Create("Text", {
 						Text = "weapon",
 						Parent = preview_frame,
 						Visible = false,
@@ -8185,13 +8187,13 @@ function Library:Notify(info)
 	local time = info.time or info.Time or 5
 	local z = 10
 
-	local holder = Library:create("Square", {
+	local holder = Library:Create("Square", {
 		Position = UDim2.new(0, 19, 0, 75),
 		Transparency = 0,
 		Thickness = 1,
 	}, true)
 
-	local background = Library:create("Square", {
+	local background = Library:Create("Square", {
 		Size = UDim2.new(0, Utility.textlength(title, 2, 13).X + 5, 0, 19),
 		Position = UDim2.new(0, -500, 0, 0),
 		Parent = holder,
@@ -8201,10 +8203,10 @@ function Library:Notify(info)
 		Filled = true,
 	}, true)
 
-	local outline1 = Library:outline(background, Color3.fromRGB(44, 44, 44), z, true)
-	local outline2 = Library:outline(outline1, Color3.fromRGB(0, 0, 0), z, true)
+	local outline1 = Library:Outline(background, Color3.fromRGB(44, 44, 44), z, true)
+	local outline2 = Library:Outline(outline1, Color3.fromRGB(0, 0, 0), z, true)
 
-	local line = Library:create("Square", {
+	local line = Library:Create("Square", {
 		Parent = background,
 		Visible = true,
 		Transparency = 1,
@@ -8215,7 +8217,7 @@ function Library:Notify(info)
 		Filled = true,
 		ZIndex = 11,
 	})
-	local line1 = Library:create("Square", {
+	local line1 = Library:Create("Square", {
 		Parent = background,
 		Visible = true,
 		Transparency = 1,
@@ -8227,7 +8229,7 @@ function Library:Notify(info)
 		ZIndex = 11,
 	})
 
-	local notiftext = Library:create("Text", {
+	local notiftext = Library:Create("Text", {
 		Text = title,
 		Parent = background,
 		Visible = true,
@@ -8308,12 +8310,12 @@ function Library:CreateWatermark(info)
 	title = Utility.findtriggers(title)
 	local position = info.position or UDim2.new(0, 9.5, 0, 22)
 	local Watermark = { objects = {}, tickrate = 25 }
-	Watermark.Objects.holder = Library:create("Square", {
+	Watermark.Objects.holder = Library:Create("Square", {
 		Position = position,
 		Transparency = 0,
 		Thickness = 1,
 	}, true)
-	Watermark.Objects.background = Library:create("Square", {
+	Watermark.Objects.background = Library:Create("Square", {
 		Size = UDim2.new(0, Utility.textlength(title, 2, 13).X + 5, 0, 19),
 		Position = position,
 		Parent = Watermark.Objects.holder,
@@ -8323,10 +8325,10 @@ function Library:CreateWatermark(info)
 		Filled = true,
 	}, true)
 
-	Watermark.Objects.outline1 = Library:outline(Watermark.Objects.background, Color3.fromRGB(44, 44, 44), 10, true)
-	Watermark.Objects.outline2 = Library:outline(Watermark.Objects.outline1, Color3.fromRGB(0, 0, 0), 10, true)
+	Watermark.Objects.outline1 = Library:Outline(Watermark.Objects.background, Color3.fromRGB(44, 44, 44), 10, true)
+	Watermark.Objects.outline2 = Library:Outline(Watermark.Objects.outline1, Color3.fromRGB(0, 0, 0), 10, true)
 
-	Watermark.Objects.text2 = Library:create("Text", {
+	Watermark.Objects.text2 = Library:Create("Text", {
 		Parent = Watermark.Objects.background,
 		Visible = true,
 		Transparency = 1,
@@ -8339,7 +8341,7 @@ function Library:CreateWatermark(info)
 		Position = UDim2.new(0, 3, 0, 2),
 		ZIndex = 11,
 	})
-	Watermark.Objects.text3 = Library:create("Text", {
+	Watermark.Objects.text3 = Library:Create("Text", {
 		Text = title,
 		Parent = Watermark.Objects.background,
 		Visible = true,
