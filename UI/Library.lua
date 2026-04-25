@@ -23,6 +23,7 @@ local Drawing = loadstring(
 		"https://gist.githubusercontent.com/0f76/9dc85c8c380d895373dd306fd372fa59/raw/e2abc40c2b5f159d61b10558c86e4f98823e30f5/drawing_extension.lua"
 	)
 )()
+
 local Tween = loadstring(
 	Get(
 		"https://gist.githubusercontent.com/0f76/1661258383c3c320ac5af2c9dd923fd5/raw/ee3c79b95eafa3b732127a0a7d37a4dc43b3bd60/custom_tween.lua"
@@ -42,7 +43,7 @@ local TotalUnnamedFlags = 0
 local Utility = Handler.CreateModule("Utility")
 do
 	function Utility.TextLength(str, font, fontsize)
-		local text = Drawing.new("Text")
+		local text = Drawing:new("Text")
 		text.Text = str
 		text.Font = font
 		text.Size = fontsize
@@ -76,13 +77,13 @@ do
 			["{year}"] = os.date("%Y"),
 			["{fps}"] = GetService("Stats").FrameRateManager:FindFirstChild("RenderAverage")
 					and string.format("%.1f", 1000 / GetService("Stats").FrameRateManager.RenderAverage:GetValue()) .. " fps"
-				or "0 fps",
+				or "nil fps",
 			["{ping}"] = GetService("Stats") ~= nil and math.floor(
 				GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
-			) .. " ms" or "0 ms",
+			) .. " ms" or "nil ms",
 			["{game}"] = StartUpArgs[1],
 			["{build}"] = StartUpArgs[2],
-			["{uid}"] = getgenv().uid or "nil",
+			["{uid}"] = game.Players.LocalPlayer.UserId or "nil",
 			["{time}"] = os.date("%X", os.time()),
 			["{date}"] = os.date("%b. %d, %Y"),
 		}
@@ -190,7 +191,7 @@ do
 		local minnumb = ranges[selected]
 		local maxnumb = ranges[selected + 1]
 		local lerpValue = (value - minnumb.start) / (maxnumb.start - minnumb.start)
-		return Utility.lerp(lerpValue, minnumb.number, maxnumb.number)
+		return Utility.Lerp(lerpValue, minnumb.number, maxnumb.number)
 	end
 end
 
@@ -425,7 +426,7 @@ Library:Connect(RunService.RenderStepped, function()
 	end
 end)
 
-function Library:SetOpen(bool)
+function Library:set_open(bool)
 	if typeof(bool) == "boolean" then
 		--[=[
         for _,v in next, Library.Drawings do
@@ -856,7 +857,7 @@ function Library.CreateDropdown(
 						table.insert(textchosen, opt)
 
 						if
-							Utility.textlength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
+							Utility.TextLength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
 							> (dropdown.AbsoluteSize.X - 6)
 						then
 							cutobject = true
@@ -1156,7 +1157,7 @@ function Library.CreateList(
 						table.insert(textchosen, opt)
 
 						if
-							Utility.textlength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
+							Utility.TextLength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
 							> (list.AbsoluteSize.X - 6)
 						then
 							cutobject = true
@@ -1186,7 +1187,7 @@ function Library.CreateSlider(cfg)
 	local float = cfg.float or 1
 	local default = cfg.default and math.clamp(cfg.default, min, max) or min
 
-	local flag = cfg.flag or Utility.nextflag()
+	local flag = cfg.flag or Utility.NextFlag()
 	local callback = cfg.callback or function() end
 	local lol = cfg.parent or cfg.Parent or nil
 
@@ -1465,7 +1466,7 @@ function Library.CreateMultibox(
 						table.insert(textchosen, opt)
 
 						if
-							Utility.textlength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
+							Utility.TextLength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
 							> (dropdown.AbsoluteSize.X - 18)
 						then
 							cutobject = true
@@ -1496,7 +1497,7 @@ function Library.CreateMultibox(
 						table.insert(textchosen, opt)
 
 						if
-							Utility.textlength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
+							Utility.TextLength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
 							> (dropdown.AbsoluteSize.X - 18)
 						then
 							cutobject = true
@@ -1652,7 +1653,7 @@ function Library.CreateMultibox(
 				table.insert(textchosen, opt)
 
 				if
-					Utility.textlength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
+					Utility.TextLength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
 					> (dropdown.AbsoluteSize.X - 6)
 				then
 					cutobject = true
@@ -1744,7 +1745,7 @@ function Library.CreateMultibox(
 						table.insert(textchosen, opt)
 
 						if
-							Utility.textlength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
+							Utility.TextLength(table.concat(textchosen, ", ") .. ", ...", Drawing.Fonts.Plex, 13).X
 							> (dropdown.AbsoluteSize.X - 6)
 						then
 							cutobject = true
@@ -1985,10 +1986,10 @@ function Library.ObjectColorPickerInner(default, defaultalpha, parent, count, fl
 				string.format("%s, %s, %s", math.round(hsv.R * 255), math.round(hsv.G * 255), math.round(hsv.B * 255))
 
 			if flag then
-				Library.Flags[flag] = Utility.rgba(hsv.r * 255, hsv.g * 255, hsv.b * 255, alpha)
+				Library.Flags[flag] = Utility.Rgba(hsv.r * 255, hsv.g * 255, hsv.b * 255, alpha)
 			end
 
-			callback(Utility.rgba(hsv.r * 255, hsv.g * 255, hsv.b * 255, alpha))
+			callback(Utility.Rgba(hsv.r * 255, hsv.g * 255, hsv.b * 255, alpha))
 		end
 	end
 
@@ -2157,7 +2158,7 @@ function Library.CreatePicker(cfg)
 	local name = cfg.name or cfg.Name or "new colorpicker"
 	local default = cfg.default or cfg.Default or Color3.fromRGB(255, 0, 0)
 
-	local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+	local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 	local callback = cfg.callback or function() end
 	local defaultalpha = cfg.alpha or cfg.Alpha or 1
 	local lol = cfg.parent or cfg.Parent or nil
@@ -2431,7 +2432,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Text = "rainbow",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
-		Position = UDim2.new(0.5, -Utility.textlength("rainbow", 2, 13).X - 17, 0.5, -60),
+		Position = UDim2.new(0.5, -Utility.TextLength("rainbow", 2, 13).X - 17, 0.5, -60),
 		Center = true,
 		Theme = "Text",
 		ZIndex = 26,
@@ -2453,7 +2454,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Text = "lerp",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
-		Position = UDim2.new(0.5, Utility.textlength("lerp", 2, 13).X - 42, 0.5, -62),
+		Position = UDim2.new(0.5, Utility.TextLength("lerp", 2, 13).X - 42, 0.5, -62),
 		Center = false,
 		Theme = "Text",
 		ZIndex = 26,
@@ -2475,7 +2476,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 		Text = "fade",
 		Font = Drawing.Fonts.Plex,
 		Size = 13,
-		Position = UDim2.new(0.5, Utility.textlength("fade", 2, 13).X + 17, 0.5, -62),
+		Position = UDim2.new(0.5, Utility.TextLength("fade", 2, 13).X + 17, 0.5, -62),
 		Center = false,
 		Theme = "Text",
 		ZIndex = 26,
@@ -2613,8 +2614,8 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 
 	local rainbow_button = Library:Create("Square", {
 		Parent = animationpage,
-		Size = UDim2.new(0, Utility.textlength("rainbow", 2, 13).X, 0, Utility.textlength("rainbow", 2, 13).Y + 2),
-		Position = UDim2.new(0.5, -Utility.textlength("rainbow", 2, 13).X - 41, 0.5, -62),
+		Size = UDim2.new(0, Utility.TextLength("rainbow", 2, 13).X, 0, Utility.TextLength("rainbow", 2, 13).Y + 2),
+		Position = UDim2.new(0.5, -Utility.TextLength("rainbow", 2, 13).X - 41, 0.5, -62),
 		Color = Color3.fromRGB(0, 0, 0),
 		Thickness = 1,
 		Transparency = 0,
@@ -2623,8 +2624,8 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 	})
 	local lerp_button = Library:Create("Square", {
 		Parent = animationpage,
-		Size = UDim2.new(0, Utility.textlength("lerp", 2, 13).X, 0, Utility.textlength("lerp", 2, 13).Y + 2),
-		Position = UDim2.new(0.5, Utility.textlength("lerp", 2, 13).X - 42, 0.5, -62),
+		Size = UDim2.new(0, Utility.TextLength("lerp", 2, 13).X, 0, Utility.TextLength("lerp", 2, 13).Y + 2),
+		Position = UDim2.new(0.5, Utility.TextLength("lerp", 2, 13).X - 42, 0.5, -62),
 		Color = Color3.fromRGB(0, 0, 0),
 		Thickness = 1,
 		Transparency = 0,
@@ -2633,8 +2634,8 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 	})
 	local fade_button = Library:Create("Square", {
 		Parent = animationpage,
-		Size = UDim2.new(0, Utility.textlength("fade", 2, 13).X, 0, Utility.textlength("fade", 2, 13).Y + 2),
-		Position = UDim2.new(0.5, Utility.textlength("fade", 2, 13).X + 17, 0.5, -62),
+		Size = UDim2.new(0, Utility.TextLength("fade", 2, 13).X, 0, Utility.TextLength("fade", 2, 13).Y + 2),
+		Position = UDim2.new(0.5, Utility.TextLength("fade", 2, 13).X + 17, 0.5, -62),
 		Color = Color3.fromRGB(0, 0, 0),
 		Thickness = 1,
 		Transparency = 0,
@@ -2643,7 +2644,7 @@ function Library.ObjectColorPicker(default, defaultalpha, parent, count, flag, c
 	})
 	local disable_button = Library:Create("Square", {
 		Parent = animationpage,
-		Size = UDim2.new(0, Utility.textlength("disabled", 2, 13).X, 0, Utility.textlength("disabled", 2, 13).Y + 2),
+		Size = UDim2.new(0, Utility.TextLength("disabled", 2, 13).X, 0, Utility.TextLength("disabled", 2, 13).Y + 2),
 		Position = UDim2.new(0.5, -26, 0.5, -82),
 		Color = Color3.fromRGB(0, 0, 0),
 		Thickness = 1,
@@ -3206,7 +3207,7 @@ function Library:new(cfg)
 
 	local dragoutline = Library:Create("Square", {
 		Size = UDim2.new(0, size.X, 0, size.Y),
-		Position = Utility.getcenter(size.X, size.Y),
+		Position = Utility.GetCenter(size.X, size.Y),
 		Filled = false,
 		Thickness = 1,
 		Theme = "Accent",
@@ -3237,11 +3238,11 @@ function Library:new(cfg)
 		Center = false,
 		Outline = false,
 		Font = Drawing.Fonts.Plex,
-		Position = UDim2.new(0, Utility.textlength(name_white, 2, 13).X + 10, 0, 7),
+		Position = UDim2.new(0, Utility.TextLength(name_white, 2, 13).X + 10, 0, 7),
 		ZIndex = 13,
 	})
 
-	Utility.dragify(window_drag, dragoutline, window_outline)
+	Utility.Dragify(window_drag, dragoutline, window_outline)
 	function window.unload() end
 
 	function window:page(cfg)
@@ -3374,7 +3375,7 @@ function Library:new(cfg)
 			local selected_plr = nil
 			local last_plr = nil
 
-			local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+			local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 			local players = Players
 
 			local list_holder = Library:Create("Square", {
@@ -3868,7 +3869,7 @@ function Library:new(cfg)
 			local selected_server = nil
 			local last_plr = nil
 
-			local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+			local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 			local servers = HttpService:JSONDecode(
 				Get(
 					("https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=Asc&limit=100"):format(game.PlaceId)
@@ -4379,7 +4380,7 @@ function Library:new(cfg)
 				Visible = true,
 				Transparency = 1,
 				Color = Color3.fromRGB(19, 19, 19),
-				Size = UDim2.new(0, Utility.textlength(name, Drawing.Fonts.Plex, 13).X + 2, 0, 4),
+				Size = UDim2.new(0, Utility.TextLength(name, Drawing.Fonts.Plex, 13).X + 2, 0, 4),
 				Position = UDim2.new(0, 10, 0, -1),
 				Thickness = 1,
 				Filled = true,
@@ -4414,7 +4415,7 @@ function Library:new(cfg)
 				local risky = cfg.risky or cfg.Risky or false
 				local state = cfg.state or cfg.State or false
 
-				local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+				local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 				local callback = cfg.callback or cfg.Callback or function() end
 				local toggled = false
 
@@ -4505,7 +4506,7 @@ function Library:new(cfg)
 				function toggle:colorpicker(cfg)
 					local default = cfg.default or cfg.Default or Color3.fromRGB(255, 0, 0)
 
-					local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+					local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 					local callback = cfg.callback or function() end
 					local defaultalpha = cfg.alpha or cfg.Alpha or 1
 					local colorpicker_tbl = {}
@@ -4525,7 +4526,7 @@ function Library:new(cfg)
 					local mode = cfg.mode or cfg.Mode or "Hold"
 					local blacklist = cfg.blacklist or cfg.Blacklist or {}
 
-					local flag = cfg.flag or Utility.nextflag()
+					local flag = cfg.flag or Utility.NextFlag()
 					local callback = cfg.callback or function() end
 					local key_mode = mode
 
@@ -4744,8 +4745,8 @@ function Library:new(cfg)
 					Visible = true,
 					Transparency = 1,
 					Color = Color3.fromRGB(100, 100, 100),
-					Size = UDim2.new(1, -Utility.textlength(name, 2, 13).X - 45, 0, 1),
-					Position = UDim2.new(0, 30 + Utility.textlength(name, 2, 13).X, 0, 3),
+					Size = UDim2.new(1, -Utility.TextLength(name, 2, 13).X - 45, 0, 1),
+					Position = UDim2.new(0, 30 + Utility.TextLength(name, 2, 13).X, 0, 3),
 					Thickness = 1,
 					Filled = true,
 					ZIndex = 14,
@@ -4770,7 +4771,7 @@ function Library:new(cfg)
 				local float = cfg.float or 1
 				local default = cfg.default and math.clamp(cfg.default, min, max) or min
 
-				local flag = cfg.flag or Utility.nextflag()
+				local flag = cfg.flag or Utility.NextFlag()
 				local callback = cfg.callback or function() end
 
 				local holder = Library:Create("Square", {
@@ -4860,7 +4861,7 @@ function Library:new(cfg)
 				})
 
 				local function set(value)
-					value = math.clamp(Utility.round(value, float), min, max)
+					value = math.clamp(Utility.Round(value, float), min, max)
 
 					slider_value.Text = text:gsub("%[value%]", string.format("%.14g", value))
 
@@ -5152,7 +5153,7 @@ function Library:new(cfg)
 				local scrollable = cfg.scrollable or cfg.Scrollable or false
 				local scrollingmax = cfg.scrollingmax or cfg.ScrollingMax or 10
 
-				local flag = cfg.flag or Utility.nextflag()
+				local flag = cfg.flag or Utility.NextFlag()
 				local callback = cfg.callback or function() end
 				if not max and type(default) == "table" then
 					default = nil
@@ -5215,7 +5216,7 @@ function Library:new(cfg)
 				local scrollable = cfg.scrollable or cfg.Scrollable or false
 				local scrollingmax = cfg.scrollingmax or cfg.ScrollingMax or 10
 
-				local flag = cfg.flag or Utility.nextflag()
+				local flag = cfg.flag or Utility.NextFlag()
 				local callback = cfg.callback or function() end
 				if not max and type(default) == "table" then
 					default = nil
@@ -5278,7 +5279,7 @@ function Library:new(cfg)
 				local scrollable = cfg.scrollable or cfg.Scrollable or false
 				local scrollingmax = cfg.scrollingmax or cfg.ScrollingMax or 10
 
-				local flag = cfg.flag or Utility.nextflag()
+				local flag = cfg.flag or Utility.NextFlag()
 				local callback = cfg.callback or function() end
 				if not max and type(default) == "table" then
 					default = nil
@@ -5510,7 +5511,7 @@ function Library:new(cfg)
 				local name = cfg.name or cfg.Name or "new colorpicker"
 				local default = cfg.default or cfg.Default or Color3.fromRGB(255, 0, 0)
 
-				local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+				local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 				local callback = cfg.callback or function() end
 				local allow_tool = cfg.tooltip or cfg.ToolTip or false
 				local defaultalpha = cfg.alpha or cfg.Alpha or 1
@@ -5546,7 +5547,7 @@ function Library:new(cfg)
 					Utility.Table(cfg)
 					local default = cfg.default or cfg.Default or Color3.fromRGB(255, 0, 0)
 
-					local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+					local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 					local callback = cfg.callback or function() end
 					local defaultalpha = cfg.alpha or cfg.Alpha or 1
 
@@ -5574,7 +5575,7 @@ function Library:new(cfg)
 				local mode = cfg.mode or cfg.Mode or "Hold"
 				local blacklist = cfg.blacklist or cfg.Blacklist or {}
 
-				local flag = cfg.flag or Utility.nextflag()
+				local flag = cfg.flag or Utility.NextFlag()
 				local callback = cfg.callback or function() end
 				local key_mode = mode
 
@@ -5761,7 +5762,7 @@ function Library:new(cfg)
 				local default = cfg.Default or cfg.default or ""
 				local middle = cfg.middle or cfg.Middle or false
 
-				local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+				local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 				local callback = cfg.callback or function() end
 
 				local holder = Library:Create("Square", {
@@ -6424,7 +6425,7 @@ function Library:new(cfg)
 					local side = cfg.side == "left" and section_content
 						or cfg.side == "right" and section_content1
 						or section_content
-					local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+					local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 					local callback = cfg.callback or cfg.Callback or function() end
 					local toggled = false
 
@@ -6515,7 +6516,7 @@ function Library:new(cfg)
 					function toggle:colorpicker(cfg)
 						local default = cfg.default or cfg.Default or Color3.fromRGB(255, 0, 0)
 
-						local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+						local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 						local callback = cfg.callback or function() end
 						local defaultalpha = cfg.alpha or cfg.Alpha or 1
 						local colorpicker_tbl = {}
@@ -6542,7 +6543,7 @@ function Library:new(cfg)
 						local mode = cfg.mode or cfg.Mode or "Hold"
 						local blacklist = cfg.blacklist or cfg.Blacklist or {}
 
-						local flag = cfg.flag or Utility.nextflag()
+						local flag = cfg.flag or Utility.NextFlag()
 						local callback = cfg.callback or function() end
 						local key_mode = mode
 
@@ -6764,8 +6765,8 @@ function Library:new(cfg)
 						Visible = true,
 						Transparency = 1,
 						Color = Color3.fromRGB(100, 100, 100),
-						Size = UDim2.new(1, -Utility.textlength(name, 2, 13).X - 45, 0, 1),
-						Position = UDim2.new(0, 30 + Utility.textlength(name, 2, 13).X, 0, 3),
+						Size = UDim2.new(1, -Utility.TextLength(name, 2, 13).X - 45, 0, 1),
+						Position = UDim2.new(0, 30 + Utility.TextLength(name, 2, 13).X, 0, 3),
 						Thickness = 1,
 						Filled = true,
 						ZIndex = 14,
@@ -6795,7 +6796,7 @@ function Library:new(cfg)
 					if not cfg.flag then
 						print(name)
 					end
-					local flag = cfg.flag or Utility.nextflag()
+					local flag = cfg.flag or Utility.NextFlag()
 					local callback = cfg.callback or function() end
 
 					local holder = Library:Create("Square", {
@@ -6885,7 +6886,7 @@ function Library:new(cfg)
 					})
 
 					local function set(value)
-						value = math.clamp(Utility.round(value, float), min, max)
+						value = math.clamp(Utility.Round(value, float), min, max)
 
 						slider_value.Text = text:gsub("%[value%]", string.format("%.14g", value))
 
@@ -7178,7 +7179,7 @@ function Library:new(cfg)
 					local max = cfg.max or cfg.Max and (cfg.max > 1 and cfg.max) or nil
 					local scrollable = cfg.scrollable or cfg.Scrollable or false
 					local scrollingmax = cfg.scrollingmax or cfg.ScrollingMax or 10
-					local flag = cfg.flag or Utility.nextflag()
+					local flag = cfg.flag or Utility.NextFlag()
 					local side = cfg.side == "left" and section_content
 						or cfg.side == "right" and section_content1
 						or section_content
@@ -7253,7 +7254,7 @@ function Library:new(cfg)
 					local scrollable = cfg.scrollable or cfg.Scrollable or false
 					local scrollingmax = cfg.scrollingmax or cfg.ScrollingMax or 10
 
-					local flag = cfg.flag or Utility.nextflag()
+					local flag = cfg.flag or Utility.NextFlag()
 					local callback = cfg.callback or function() end
 					if not max and type(default) == "table" then
 						default = nil
@@ -7318,7 +7319,7 @@ function Library:new(cfg)
 					local side = cfg.side == "left" and section_content
 						or cfg.side == "right" and section_content1
 						or section_content
-					local flag = cfg.flag or Utility.nextflag()
+					local flag = cfg.flag or Utility.NextFlag()
 					local callback = cfg.callback or function() end
 					if not max and type(default) == "table" then
 						default = nil
@@ -7559,7 +7560,7 @@ function Library:new(cfg)
 					local name = cfg.name or cfg.Name or "new colorpicker"
 					local default = cfg.default or cfg.Default or Color3.fromRGB(255, 0, 0)
 
-					local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+					local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 					local side = cfg.side == "left" and section_content
 						or cfg.side == "right" and section_content1
 						or section_content
@@ -7598,7 +7599,7 @@ function Library:new(cfg)
 						Utility.Table(cfg)
 						local default = cfg.default or cfg.Default or Color3.fromRGB(255, 0, 0)
 
-						local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+						local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 						local callback = cfg.callback or function() end
 						local defaultalpha = cfg.alpha or cfg.Alpha or 1
 
@@ -7628,7 +7629,7 @@ function Library:new(cfg)
 						or cfg.side == "right" and section_content1
 						or section_content
 					local blacklist = cfg.blacklist or cfg.Blacklist or {}
-					local flag = cfg.flag or Utility.nextflag()
+					local flag = cfg.flag or Utility.NextFlag()
 					local callback = cfg.callback or function() end
 					local key_mode = mode
 
@@ -7817,7 +7818,7 @@ function Library:new(cfg)
 					local side = cfg.side == "left" and section_content
 						or cfg.side == "right" and section_content1
 						or section_content
-					local flag = cfg.flag or cfg.Flag or Utility.nextflag()
+					local flag = cfg.flag or cfg.Flag or Utility.NextFlag()
 					local callback = cfg.callback or function() end
 
 					local holder = Library:Create(
@@ -8194,7 +8195,7 @@ function Library:Notify(info)
 	}, true)
 
 	local background = Library:Create("Square", {
-		Size = UDim2.new(0, Utility.textlength(title, 2, 13).X + 5, 0, 19),
+		Size = UDim2.new(0, Utility.TextLength(title, 2, 13).X + 5, 0, 19),
 		Position = UDim2.new(0, -500, 0, 0),
 		Parent = holder,
 		Color = Color3.fromRGB(13, 13, 13),
@@ -8263,7 +8264,7 @@ function Library:Notify(info)
 		Tween.new(
 			line1,
 			TweenInfo.new(time, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
-			{ Size = UDim2.new(0, Utility.textlength(title, 2, 13).X + 5, 0, 1) }
+			{ Size = UDim2.new(0, Utility.TextLength(title, 2, 13).X + 5, 0, 1) }
 		):Play()
 		task.wait(time)
 		Ntif.Remove()
@@ -8306,8 +8307,9 @@ function Library:Notify(info)
 end
 
 function Library:CreateWatermark(info)
-	local title = info.title or "watermark"
-	title = Utility.findtriggers(title)
+	local title = info.title or "Watermak"
+	title = Utility.FindTriggers(title)
+
 	local position = info.position or UDim2.new(0, 9.5, 0, 22)
 	local Watermark = { objects = {}, tickrate = 25 }
 	Watermark.Objects.holder = Library:Create("Square", {
@@ -8315,8 +8317,9 @@ function Library:CreateWatermark(info)
 		Transparency = 0,
 		Thickness = 1,
 	}, true)
+
 	Watermark.Objects.background = Library:Create("Square", {
-		Size = UDim2.new(0, Utility.textlength(title, 2, 13).X + 5, 0, 19),
+		Size = UDim2.new(0, Utility.TextLength(title, 2, 13).X + 5, 0, 19),
 		Position = position,
 		Parent = Watermark.Objects.holder,
 		Color = Color3.fromRGB(13, 13, 13),
@@ -8351,7 +8354,7 @@ function Library:CreateWatermark(info)
 		Center = false,
 		Outline = false,
 		Font = Drawing.Fonts.Plex,
-		Position = UDim2.new(0, 1 + Utility.textlength(Watermark.Objects.text2.Text, 2, 13).X, 0, 2),
+		Position = UDim2.new(0, 1 + Utility.TextLength(Watermark.Objects.text2.Text, 2, 13).X, 0, 2),
 		ZIndex = 11,
 	})
 
@@ -8361,7 +8364,7 @@ function Library:CreateWatermark(info)
 		end
 	end
 	function Watermark.SetText(text)
-		title = Utility.findtriggers(".{game} | " .. text)
+		title = Utility.FindTriggers(".{game} | " .. text)
 		Watermark.Update()
 	end
 
@@ -8391,7 +8394,7 @@ function Library:CreateWatermark(info)
 			Watermark.Objects.text3.Text = title
 			Watermark.Objects.background.Size = UDim2.new(
 				0,
-				1 + Utility.textlength(Watermark.Objects.text2.Text, 2, 13).X + Utility.textlength(title, 2, 13).X + 5,
+				1 + Utility.TextLength(Watermark.Objects.text2.Text, 2, 13).X + Utility.TextLength(title, 2, 13).X + 5,
 				0,
 				19
 			)
