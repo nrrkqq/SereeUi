@@ -209,8 +209,8 @@ local ThemeObjects = {}
 local Library = {
 	Priorities = {},
 	Friends = {},
-	NotifList = { Ntifs = {}, interval = 12 },
-	Settings = { folder_name = "seere/" .. StartUpArgs[1], DefaultAccent = Color3.fromRGB(255, 255, 255) },
+	NotifList = { Ntifs = {}, Interval = 12 },
+	Settings = { FolderName = "seere/" .. StartUpArgs[1], DefaultAccent = Color3.fromRGB(255, 255, 255) },
 	Drawings = {},
 	Theme = table.clone(Themes.Default),
 	CurrentColor = nil,
