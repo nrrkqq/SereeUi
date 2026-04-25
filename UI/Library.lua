@@ -17,7 +17,7 @@ local TeleportService = GetService("TeleportService")
 local Players = GetService("Players")
 local CoreGui = GetService("CoreGui")
 
-local StartUpArgs = getgenv().StartUpArgs or { "universal", "public" }
+local StartUpArgs = getgenv().StartUpArgs or { "Private", "Public" }
 local Drawing = loadstring(
 	Get(
 		"https://gist.githubusercontent.com/0f76/9dc85c8c380d895373dd306fd372fa59/raw/e2abc40c2b5f159d61b10558c86e4f98823e30f5/drawing_extension.lua"
@@ -333,7 +333,7 @@ local Images = {
 }
 
 function Library:Outline(obj, color, zin, ignore)
-	local outline = drawing:new("Square")
+	local outline = Drawing:new("Square")
 	if not ignore then
 		table.insert(Library.Drawings, outline)
 	end
@@ -356,7 +356,7 @@ function Library:Outline(obj, color, zin, ignore)
 	return outline
 end
 function Library:Create(class, properties, ignore)
-	local obj = drawing:new(class)
+	local obj = Drawing:new(class)
 	if not ignore then
 		table.insert(Library.Drawings, obj)
 	end
